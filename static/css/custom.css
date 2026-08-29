@@ -1,0 +1,153 @@
+/* ANPR Smart Boom Barrier Custom CSS & Animations */
+
+/* Custom Font import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.font-mono {
+    font-family: 'JetBrains+Mono', monospace;
+}
+
+/* Indian HSRP License Plate Styling */
+.hsrp-plate {
+    background: #ffffff;
+    color: #111827;
+    border: 3px solid #1f2937;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+}
+
+.hsrp-plate-ev {
+    background: #15803d;
+    color: #ffffff;
+    border: 3px solid #0f5132;
+}
+
+.hsrp-ind-strip {
+    background: #003399;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 6px;
+    height: 100%;
+    border-right: 2px solid #1e3a8a;
+}
+
+.hsrp-plate-ev .hsrp-ind-strip {
+    background: #14532d;
+    border-right-color: #052e16;
+}
+
+.hsrp-chakra {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid #93c5fd;
+    position: relative;
+    margin-bottom: 2px;
+}
+
+.hsrp-chakra::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Boom Barrier Arm Pivot & Animations */
+.barrier-housing {
+    transform-origin: 65px 140px;
+}
+
+.barrier-arm {
+    transform-origin: 65px 140px;
+    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.barrier-arm.open {
+    transform: rotate(-75deg);
+}
+
+/* LED Traffic Lights Glowing */
+.led-red {
+    box-shadow: 0 0 15px #ef4444, 0 0 30px #dc2626;
+}
+
+.led-green {
+    box-shadow: 0 0 15px #10b981, 0 0 30px #059669;
+}
+
+.led-amber {
+    box-shadow: 0 0 15px #f59e0b, 0 0 30px #d97706;
+}
+
+/* Scanline Laser Effect */
+@keyframes laser-scan {
+    0% {
+        top: 0%;
+        opacity: 0.8;
+    }
+    50% {
+        top: 100%;
+        opacity: 1;
+    }
+    100% {
+        top: 0%;
+        opacity: 0.8;
+    }
+}
+
+.laser-scanner {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #10b981, #06b6d4, transparent);
+    box-shadow: 0 0 12px #06b6d4, 0 0 20px #10b981;
+    animation: laser-scan 2.5s infinite ease-in-out;
+    pointer-events: none;
+}
+
+/* Subtle Glassmorphism Card Style */
+.glass-card {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.glass-card:hover {
+    border-color: rgba(71, 85, 105, 0.6);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
