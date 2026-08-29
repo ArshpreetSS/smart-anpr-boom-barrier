@@ -13,12 +13,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# Local SQLite Databases (Keeps test & private gate logs local)
-*.db
-*.sqlite
-*.sqlite3
-!test_*.db
-
 # Runtime Uploads & Captures
 uploads/*
 !uploads/.gitkeep

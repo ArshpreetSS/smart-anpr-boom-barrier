@@ -73,12 +73,11 @@ Inference times measured on standard CPU:
 ```
 smart-anpr-boom-barrier/
 ├── app.py                      # Core FastAPI app, ANPR Pipeline, GateManager & SQLite ORM
+├── gate_records.db             # Pre-configured SQLite database with vehicle registry & gate logs
 ├── requirements.txt            # Python package dependencies
-├── .gitignore                  # Git ignore rules for bytecode, databases & uploads
+├── .gitignore                  # Git ignore rules for bytecode & caches
 ├── .env.example                # Configuration template
 ├── benchmark_anpr_speed.py     # High-speed ANPR latency & FPS benchmarking script
-├── test_anpr.py                # End-to-end unit and integration tests
-├── test_serial_and_charles_wright.py # Hardware serial port & Charles Wright OCR verification
 ├── train_character_cnn.py      # CharacterCNN dataset generator & PyTorch trainer
 ├── generate_sample_plates.py   # Charles Wright synthetic HSRP plate generator
 ├── models/
@@ -145,17 +144,11 @@ python -m uvicorn app:app --host 0.0.0.0 --port 8888
 
 ---
 
-## 🧪 Running Automated Tests & Benchmarks
+## 🧪 Running Benchmarks
 
 ```bash
 # Run ANPR Speed & FPS Benchmark
 python benchmark_anpr_speed.py
-
-# Run Full Test Suite (OCR, Regex, DB Sessions, Cooldowns)
-python test_anpr.py
-
-# Run Hardware COM4 & Charles Wright Font Tests
-python test_serial_and_charles_wright.py
 ```
 
 ---
