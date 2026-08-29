@@ -1,7 +1,9 @@
 import sqlite3
+import os
 
 def migrate():
-    conn = sqlite3.connect("gate_records.db")
+    db_path = "database/gate_records.db" if os.path.exists("database/gate_records.db") else "gate_records.db"
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     
     # 1. Check gate_logs columns
@@ -23,7 +25,7 @@ def migrate():
         
     conn.commit()
     conn.close()
-    print("Database schema migration completed!")
+    print(f"Database schema migration completed on {db_path}!")
 
 if __name__ == '__main__':
     migrate()

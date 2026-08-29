@@ -1,7 +1,14 @@
 import time
 import os
+import sys
 import cv2
 import numpy as np
+
+# Ensure project root is in sys.path
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from app import perform_anpr
 
 def benchmark():
@@ -10,10 +17,10 @@ def benchmark():
     print("==========================================")
     
     sample_files = [
-        "static/sample_plates/mh12ab1234_car.jpg",
-        "static/sample_plates/dl01c5678_car.jpg",
-        "static/sample_plates/user_kia_rj14_sample.jpg",
-        "static/sample_plates/user_double_decker_sample.jpg"
+        os.path.join(PROJECT_ROOT, "static/images/mh12ab1234_car.jpg"),
+        os.path.join(PROJECT_ROOT, "static/images/dl01c5678_car.jpg"),
+        os.path.join(PROJECT_ROOT, "static/images/user_kia_rj14_sample.jpg"),
+        os.path.join(PROJECT_ROOT, "static/images/user_double_decker_sample.jpg")
     ]
     
     images = []

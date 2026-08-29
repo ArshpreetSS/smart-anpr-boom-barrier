@@ -71,26 +71,44 @@ Inference times measured on standard CPU:
 ## 📂 Project Structure
 
 ```
-smart-anpr-boom-barrier/
-├── app.py                      # Core FastAPI app, ANPR Pipeline, GateManager & SQLite ORM
-├── gate_records.db             # Pre-configured SQLite database with vehicle registry & gate logs
-├── requirements.txt            # Python package dependencies
-├── .gitignore                  # Git ignore rules for bytecode & caches
-├── .env.example                # Configuration template
-├── benchmark_anpr_speed.py     # High-speed ANPR latency & FPS benchmarking script
-├── train_character_cnn.py      # CharacterCNN dataset generator & PyTorch trainer
-├── generate_sample_plates.py   # Charles Wright synthetic HSRP plate generator
+GateKeeper-AI/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── .env.example
+│
 ├── models/
-│   ├── ocr_model.pth           # Trained PyTorch CharacterCNN weights (36 classes)
-│   └── fonts/
-│       └── CharlesWright-Bold.otf # Official Indian HSRP typeface
-├── templates/
-│   └── index.html              # Modern dark-mode dashboard UI
+│   ├── plate_detector/
+│   └── character_recognition/
+│
 ├── static/
-│   ├── css/custom.css          # HSRP styling, mechanical boom barrier CSS
-│   ├── js/app.js               # WebSocket stream client, canvas painter, Web Audio
-│   └── sample_plates/          # Gallery test plates and sample vehicle bumper images
-└── uploads/                    # Directory for cropped plate images saved during gate events
+│   ├── css/
+│   │   └── style.css
+│   │
+│   ├── js/
+│   │   └── main.js
+│   │
+│   └── images/
+│
+├── templates/
+│   ├── index.html
+│   ├── dashboard.html
+│   └── login.html
+│
+├── uploads/
+│
+├── database/
+│   └── gate_records.db
+│
+├── scripts/
+│   ├── benchmark_anpr_speed.py
+│   ├── generate_sample_plates.py
+│   └── migrate_db.py
+│
+└── training/
+    └── train_character_cnn.py
 ```
 
 ---
@@ -140,15 +158,25 @@ python -m uvicorn app:app --host 0.0.0.0 --port 8888
 
 ### Access Dashboard
 - **Local PC / Laptop**: [http://localhost:8000](http://localhost:8000) (or port `8888`)
+- **Operator Login**: [http://localhost:8000/login](http://localhost:8000/login)
 - **Mobile Device (Same Wi-Fi)**: `http://<YOUR_LOCAL_IP>:8000` (e.g. `http://192.168.1.5:8000`)
 
 ---
 
-## 🧪 Running Benchmarks
+## 🧪 Running Benchmarks & Scripts
 
 ```bash
 # Run ANPR Speed & FPS Benchmark
-python benchmark_anpr_speed.py
+python scripts/benchmark_anpr_speed.py
+
+# Generate Synthetic Charles Wright HSRP Plates
+python scripts/generate_sample_plates.py
+
+# Run Database Migrations
+python scripts/migrate_db.py
+
+# Train PyTorch CharacterCNN Model
+python training/train_character_cnn.py
 ```
 
 ---
@@ -168,6 +196,9 @@ To connect an Arduino / ESP32 / Relay module to operate physical boom barriers:
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `WS` | `/ws/stream` & `/ws` | Real-time video frame ingestion & ANPR telemetry stream |
+| `GET` | `/` | Main interactive gate operator dashboard |
+| `GET` | `/dashboard` | Standalone full-screen dashboard view |
+| `GET` | `/login` | Operator security authentication portal |
 | `GET` | `/api/stats` | System statistics (entries, exits, gate state, hardware status) |
 | `GET` | `/api/system/network-info`| Returns local IP, port, and mobile connection URL |
 | `GET` | `/api/sessions/active` | Active vehicle sessions currently inside |

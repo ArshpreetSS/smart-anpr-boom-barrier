@@ -52,7 +52,7 @@ class CharlesWrightCharacterDataset(Dataset):
         self.data = []
         
         # Charles Wright font paths prioritized
-        self.primary_font = 'models/fonts/CharlesWright-Bold.otf'
+        self.primary_font = 'models/character_recognition/fonts/CharlesWright-Bold.otf' if os.path.exists('models/character_recognition/fonts/CharlesWright-Bold.otf') else 'models/fonts/CharlesWright-Bold.otf'
         
         secondary_candidates = [
             'C:/Windows/Fonts/segoeuib.ttf',
@@ -203,10 +203,12 @@ def train_charles_wright_cnn():
         
         if val_acc > best_acc:
             best_acc = val_acc
-            torch.save(model.state_dict(), 'models/ocr_model.pth')
+            save_path = 'models/character_recognition/ocr_model.pth'
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            torch.save(model.state_dict(), save_path)
             
     print(f"\n[DONE] Successfully trained Charles Wright CharacterCNN! Best Val Acc: {best_acc:.2f}%")
-    print(f"Model weights saved to models/ocr_model.pth")
+    print(f"Model weights saved to models/character_recognition/ocr_model.pth")
 
 if __name__ == '__main__':
     train_charles_wright_cnn()

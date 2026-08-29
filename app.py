@@ -34,7 +34,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 # =====================================================================
 # 1. DATABASE & ORM SETUP (SQLite with SQLAlchemy)
 # =====================================================================
-DB_PATH = "gate_records.db"
+os.makedirs("database", exist_ok=True)
+DB_PATH = os.environ.get("DATABASE_PATH", "database/gate_records.db")
 engine = create_engine(f"sqlite:///{DB_PATH}", connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -471,13 +472,19 @@ class CharacterCNN(nn.Module):
         return x
 
 class HybridOCREngine:
-    def __init__(self, model_path="models/ocr_model.pth"):
+    def __init__(self, model_path=None):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"[OCR] Initializing EasyOCR Engine (Device: {self.device})...")
         self.easy_reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available(), verbose=False)
         
         self.cnn_model = CharacterCNN(num_classes=NUM_CLASSES).to(self.device)
-        self.model_path = model_path
+        if model_path:
+            self.model_path = model_path
+        elif os.path.exists("models/character_recognition/ocr_model.pth"):
+            self.model_path = "models/character_recognition/ocr_model.pth"
+        else:
+            self.model_path = "models/ocr_model.pth"
+            
         self._load_or_init_cnn()
         self.cnn_model.eval()
 
@@ -1396,7 +1403,21 @@ async def serve_index(request: Request):
     return templates.TemplateResponse("index.html", {
         "request": request,
         "local_ip": get_local_ip(),
-        "server_port": 8000
+        "server_port": request.url.port or 8000
+    })
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def serve_dashboard(request: Request):
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "local_ip": get_local_ip(),
+        "server_port": request.url.port or 8000
+    })
+
+@app.get("/login", response_class=HTMLResponse)
+async def serve_login(request: Request):
+    return templates.TemplateResponse("login.html", {
+        "request": request
     })
 
 @app.get("/api/rto/config")
