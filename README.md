@@ -1,33 +1,31 @@
-<div align="center">
-
 # 🛡️ GateKeeper AI — Smart ANPR Boom Barrier Gate System
 
 ### Ultra-Fast Edge AI Computer Vision & Boom Barrier Automation System for Indian HSRP Number Plates
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-005571.svg?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C.svg?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
-[![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-5C3EE8.svg?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.3-38B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-
-[Features](#-key-features) • [Architecture](#-system-architecture) • [Benchmarks](#-performance-benchmarks) • [Installation](#-installation--setup) • [Hardware Serial](#-hardware-boom-barrier-serial-port) • [API Endpoints](#-rest--websocket-api) • [License](#-license)
-
-</div>
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.100%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" alt="PyTorch" />
+  <img src="https://img.shields.io/badge/OpenCV-4.8%2B-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white" alt="OpenCV" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" />
+</p>
 
 ---
 
 ## 📖 Overview
 
-**GateKeeper AI** is a production-grade, end-to-end **Automatic Number Plate Recognition (ANPR)** and **Smart Parking / Boom Barrier Gate Management System**. Designed specifically for Indian High-Security Registration Plates (HSRP), the system provides real-time vehicle entry/exit tracking, automated boom barrier gate control via physical hardware serial ports (`COM4`), and live RTO vehicle data verification with smart caching.
+**GateKeeper AI** is a production-ready, end-to-end **Automatic Number Plate Recognition (ANPR)** and **Smart Parking / Boom Barrier Gate Management System**. 
+
+Engineered specifically for Indian High-Security Registration Plates (HSRP), the system provides real-time vehicle entry/exit tracking, automated boom barrier gate control via physical hardware serial ports (`COM4`), and live RTO vehicle data verification with persistent SQLite caching.
 
 ---
 
 ## 🌟 Key Features
 
 ### ⚡ 1. Multi-Tier High-Speed Vision Engine
-- **Primary Tier (`CharacterCNN`)**: Ultra-lightweight 36-class alphanumeric PyTorch CNN trained specifically on **Charles Wright (HSRP)** typography. Features batch tensor inference with `torch.inference_mode()` executing in **$< 1\text{ ms}$**!
-- **Secondary Tier (`EasyOCR Ensemble`)**: High-accuracy fallback for multi-angle, skewed, or dirty plates with dimension-clamped processing ($320 \times 70$) running in **$< 30\text{ ms}$**.
+- **Primary Tier (`CharacterCNN`)**: Ultra-lightweight 36-class alphanumeric PyTorch CNN trained specifically on **Charles Wright (HSRP)** typography. Features batch tensor inference with `torch.inference_mode()` executing in **under 1 ms**!
+- **Secondary Tier (`EasyOCR Ensemble`)**: High-accuracy fallback for multi-angle, skewed, or dirty plates with dimension-clamped processing (320 × 70) running in **under 30 ms**.
 - **Supported Plate Formats**:
   - `AA 00 AA 0000` (e.g. `MH 12 AB 1234`, `RJ 14 CV 0002`)
   - `AA 00 A 0000` (e.g. `MH 12 A 1234`, `DL 01 C 5678`)
@@ -63,17 +61,17 @@ Inference times measured on standard CPU:
 
 | Test Sample / Scenario | Detected Plate | Processing Latency | Real-Time Frame Rate | Active Engine Tier |
 | :--- | :--- | :---: | :---: | :--- |
-| **Standard HSRP Bumper 1** | `MH 12 AB 1234` | **`5.58 ms`** | **`179.2 FPS`** | `CharacterCNN (Tier 1)` |
-| **Standard HSRP Bumper 2** | `DL 01 C 5678` | **`4.25 ms`** | **`235.3 FPS`** | `CharacterCNN (Tier 1)` |
-| **Two-Line (Double-Decker)** | `AP 39 MF 5893` | **`24.97 ms`** | **`40.0 FPS`** | `EasyOCR Ensemble (Tier 2)` |
-| **Real Car Photo with Reflection** | `RJ 14 CV 0002` | **`29.74 ms`** | **`33.6 FPS`** | `EasyOCR Ensemble (Tier 2)` |
+| **Standard HSRP Bumper 1** | `MH 12 AB 1234` | **5.58 ms** | **179.2 FPS** | `CharacterCNN (Tier 1)` |
+| **Standard HSRP Bumper 2** | `DL 01 C 5678` | **4.25 ms** | **235.3 FPS** | `CharacterCNN (Tier 1)` |
+| **Two-Line (Double-Decker)** | `AP 39 MF 5893` | **24.97 ms** | **40.0 FPS** | `EasyOCR Ensemble (Tier 2)` |
+| **Real Car Photo with Reflection** | `RJ 14 CV 0002` | **29.74 ms** | **33.6 FPS** | `EasyOCR Ensemble (Tier 2)` |
 
 ---
 
 ## 📂 Project Structure
 
 ```
-gatekeeper-anpr/
+smart-anpr-boom-barrier/
 ├── app.py                      # Core FastAPI app, ANPR Pipeline, GateManager & SQLite ORM
 ├── requirements.txt            # Python package dependencies
 ├── .gitignore                  # Git ignore rules for bytecode, databases & uploads
@@ -102,8 +100,8 @@ gatekeeper-anpr/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/gatekeeper-anpr.git
-cd gatekeeper-anpr
+git clone https://github.com/ArshpreetSS/smart-anpr-boom-barrier.git
+cd smart-anpr-boom-barrier
 ```
 
 ### 2. Create and Activate a Virtual Environment
@@ -136,7 +134,7 @@ cp .env.example .env
 ```bash
 python -m uvicorn app:app --host 0.0.0.0 --port 8000
 ```
-Or for custom port:
+Or for custom port (e.g. 8888):
 ```bash
 python -m uvicorn app:app --host 0.0.0.0 --port 8888
 ```
@@ -166,7 +164,7 @@ python test_serial_and_charles_wright.py
 
 To connect an Arduino / ESP32 / Relay module to operate physical boom barriers:
 1. Plug the microcontroller into your computer via USB (e.g. assigned as `COM4` on Windows or `/dev/ttyUSB0` on Linux).
-2. The system sends:
+2. The system automatically sends:
    - `b"OPEN\n"` when vehicle is authorized to enter or exit.
    - `b"CLOSE\n"` when gate timer expires or cooldown finishes.
 
@@ -192,5 +190,3 @@ To connect an Arduino / ESP32 / Relay module to operate physical boom barriers:
 ## 📄 License
 
 This project is open-source and licensed under the **MIT License**.
-#   s m a r t - a n p r - b o o m - b a r r i e r  
- 
