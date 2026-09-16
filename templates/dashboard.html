@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GateKeeper AI • Smart ANPR Boom Barrier & Parking Session Gate</title>
-    
+    <title>GateKeeper AI • Security Operations Console</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,630 +16,941 @@
             theme: {
                 extend: {
                     colors: {
-                        slate: {
-                            850: '#0f172a',
-                            925: '#090d16',
-                            950: '#020617',
+                        cyber: {
+                            black: '#030508',
+                            surface: '#070a11',
+                            card: '#0c111c',
+                            emerald: '#00ff88',
+                            cyan: '#00e5ff',
+                            amber: '#ffaa00',
+                            red: '#ff3344'
                         }
                     }
                 }
             }
-        }
+        };
     </script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- QRCode.js for instant mobile scanning -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
-    <!-- Custom CSS -->
+
+    <!-- Custom Landing Page Cyber Aesthetics & Operational Styles -->
+    <link rel="stylesheet" href="/static/css/landing.css">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
+<body class="bg-[#030508] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-[#00ff88] selection:text-[#030508] antialiased technical-grid-bg">
+  <!-- =====================================================================
+       0. CINEMATIC SYSTEM BOOT / INITIALIZATION SCREEN
+       ===================================================================== -->
+  <div id="system-boot-overlay" aria-hidden="true">
+    <!-- CRT Scanline, Grid & Ambient Particles -->
+    <div class="boot-grid-bg absolute inset-0 pointer-events-none opacity-40"></div>
+    <div class="boot-scanlines absolute inset-0 pointer-events-none opacity-25"></div>
+    <canvas id="boot-particles-canvas" class="absolute inset-0 pointer-events-none opacity-50"></canvas>
+    <div class="boot-radial-glow absolute inset-0 pointer-events-none"></div>
 
-    <!-- Top Navigation & Status Header -->
-    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Left Branding -->
-            <div class="flex items-center space-x-2.5 sm:space-x-3">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/20 shrink-0">
-                    <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
-                </div>
-                <div>
-                    <div class="flex items-center space-x-1.5 sm:space-x-2">
-                        <span class="font-black text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">GATEKEEPER AI</span>
-                        <span class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest px-1.5 sm:px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">ANPR v4.0</span>
+    <!-- Top Technical Telemetry Header -->
+    <div class="absolute top-6 left-6 right-6 flex items-center justify-between text-[11px] font-mono text-slate-500 tracking-wider pointer-events-none">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#00ff88] animate-ping"></span>
+        <span class="text-slate-400">BOOT SEQUENCE // POST #01</span>
+      </div>
+      <div class="hidden sm:flex items-center gap-4 text-slate-600">
+        <span>KERNEL: v4.19-RT</span>
+        <span>MEM: 16384MB OK</span>
+        <span>ANPR_ARCH: x86_64_AVX2</span>
+      </div>
+      <div id="boot-clock" class="text-slate-400">00:00:00 IST</div>
+    </div>
+
+    <!-- Central Boot Content -->
+    <div class="relative z-10 flex flex-col items-center text-center px-6 max-w-md w-full">
+      <!-- Center Logo Shield with Rotating Reticle Orbit -->
+      <div class="relative mb-6">
+        <div class="boot-orbit-ring absolute -inset-3 rounded-full"></div>
+        <div class="boot-orbit-pulse absolute -inset-6 rounded-full"></div>
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-900/90 border border-[#00ff88]/40 flex items-center justify-center relative shadow-[0_0_35px_rgba(0,255,136,0.25)] backdrop-blur-md">
+          <i data-lucide="shield" class="w-8 h-8 sm:w-10 sm:h-10 text-[#00ff88]"></i>
+          <!-- Corner Crosshairs -->
+          <span class="absolute top-1 left-1 w-1.5 h-1.5 border-t border-l border-cyan-400"></span>
+          <span class="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-cyan-400"></span>
+          <span class="absolute bottom-1 left-1 w-1.5 h-1.5 border-b border-l border-cyan-400"></span>
+          <span class="absolute bottom-1 right-1 w-1.5 h-1.5 border-b border-r border-cyan-400"></span>
+        </div>
+      </div>
+
+      <!-- Title & Subtitle -->
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-display mb-1 flex items-center gap-1.5">
+        <span>GATEKEEPER</span>
+        <span class="text-[#00ff88]">AI</span>
+      </h1>
+      <p class="text-[10px] sm:text-xs font-mono tracking-[0.25em] text-slate-400 uppercase mb-7">
+        Autonomous Access Control
+      </p>
+
+      <!-- Progress Bar & Percentage Container -->
+      <div class="w-full space-y-2.5 mb-5">
+        <!-- Thin Horizontal Progress Track -->
+        <div class="w-full h-1 bg-slate-900/90 rounded-full overflow-hidden border border-white/10 relative">
+          <div id="boot-progress-fill" class="h-full bg-gradient-to-r from-cyan-500 via-[#00ff88] to-[#00ff88] rounded-full transition-all duration-150 ease-out shadow-[0_0_12px_rgba(0,255,136,0.8)]" style="width: 0%;"></div>
+        </div>
+        <!-- Percentage & Status Row -->
+        <div class="flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse"></span>
+            <span id="boot-status-text" class="text-slate-300 font-semibold uppercase tracking-wider text-[11px]">INITIALIZING AI CORE...</span>
+          </div>
+          <span id="boot-percentage-text" class="text-[#00ff88] font-bold text-xs tracking-wider">00%</span>
+        </div>
+      </div>
+
+      <!-- Micro Diagnostic Log Ticker -->
+      <div class="w-full bg-black/50 rounded border border-white/10 p-2 text-left text-[10px] font-mono text-slate-400 h-9 overflow-hidden relative">
+        <div id="boot-micro-log" class="truncate">
+          <span class="text-[#00ff88]">&gt; </span><span class="text-slate-300">ESTABLISHING SECURE HARDWARE BUS...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Corner Terminal Metadata -->
+    <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[10px] font-mono text-slate-600 pointer-events-none">
+      <span>SYSTEM: ONLINE READY</span>
+      <span class="hidden sm:inline">RAPIDAPI VAHAN GATEWAY: SYNCED</span>
+      <span>ENCRYPTION: AES-256-GCM</span>
+    </div>
+  </div>
+
+
+    <!-- =====================================================================
+         TOP SYSTEM COMMAND HEADER
+         ===================================================================== -->
+    <header class="border-b border-white/10 bg-[#030508]/95 backdrop-blur-xl sticky top-0 z-40">
+        <div class="w-full px-3 sm:px-6 h-16 flex items-center justify-between">
+            
+            <!-- Left Branding & Return Home -->
+            <div class="flex items-center space-x-3">
+                <a href="/" class="btn-cyber-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 font-mono group" title="Return to 3D Landing Page">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-[#00ff88] group-hover:-translate-x-0.5 transition-transform"></i>
+                    <span>Home</span>
+                </a>
+
+                <div class="h-5 w-[1px] bg-white/10 hidden sm:block"></div>
+
+                <a href="/" class="flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 rounded bg-slate-900 border border-white/15 flex items-center justify-center relative overflow-hidden group-hover:border-[#00ff88] transition-colors shrink-0">
+                        <i data-lucide="shield" class="w-4 h-4 text-[#00ff88]"></i>
                     </div>
-                    <p class="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden xs:block">Charles Wright OCR + COM4 Hardware Relay + 5-Min Tracker</p>
-                </div>
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="font-display font-bold text-sm tracking-tight text-white">GATEKEEPER <span class="text-[#00ff88]">AI</span></span>
+                            <span class="text-[9px] font-mono font-bold tracking-widest px-1.5 py-0.5 rounded bg-emerald-950/60 text-[#00ff88] border border-[#00ff88]/30">OPERATIONS CONSOLE</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-mono hidden md:block">COMMAND CENTER • SECTOR 01 • AUTONOMOUS INGRESS</p>
+                    </div>
+                </a>
             </div>
 
-            <!-- Middle Status Badges (Responsive) -->
-            <div class="hidden lg:flex items-center space-x-3">
-                <div id="gate-state-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1.5 transition-all">
+            <!-- Middle Status Telemetry Badges -->
+            <div class="hidden lg:flex items-center space-x-2.5">
+                <!-- System Connection -->
+                <div class="px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[11px] font-mono flex items-center gap-2">
+                    <span id="ws-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="ws-status-badge" class="text-slate-300">SYSTEM ONLINE</span>
+                </div>
+
+                <!-- Hardware Relay Status -->
+                <div id="serial-status-badge" class="px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[11px] font-mono flex items-center gap-2 text-slate-300">
+                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-cyan-400"></i>
+                    <span id="serial-status-text">COM4: STANDBY</span>
+                </div>
+
+                <!-- Gate Barrier State -->
+                <div id="gate-state-badge" class="px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30 flex items-center gap-1.5 transition-all">
                     <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
                     <span id="gate-state-text">GATE CLOSED (0°)</span>
                 </div>
 
-                <div id="serial-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-800/80 border border-slate-700/60 flex items-center gap-1.5 text-slate-300">
-                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-400"></i>
-                    <span id="serial-status-text">COM4: STANDBY</span>
-                </div>
-
-                <div class="px-3 py-1 rounded-full text-xs font-medium bg-slate-800/80 border border-slate-700/60 flex items-center gap-2">
-                    <span id="ws-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                    <span id="ws-status-badge" class="text-slate-300">Connecting...</span>
-                </div>
-
-                <div class="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-800/60 border border-slate-700/40 text-cyan-400">
+                <!-- Live FPS -->
+                <div class="px-2.5 py-1 rounded bg-black/60 border border-cyan-500/30 text-cyan-400 font-mono text-[11px] flex items-center gap-1.5">
+                    <i data-lucide="activity" class="w-3 h-3 text-cyan-400"></i>
                     <span id="fps-counter">0.0 FPS</span>
                 </div>
             </div>
 
-            <!-- Right Controls (RTO Gateway, Mobile QR, Mute) -->
+            <!-- Right Controls: RTO, Mobile QR, Audio Mute, Live Clock -->
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- RapidAPI RTO Settings Trigger -->
-                <button id="btn-open-rto-config" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-300 border border-slate-700 hover:text-white flex items-center gap-1.5 transition-all">
-                    <i data-lucide="globe" class="w-3.5 h-3.5 text-emerald-400"></i>
-                    <span class="hidden sm:inline">RapidAPI RTO</span>
+                <!-- RapidAPI Indian RTO Gateway Config -->
+                <button id="btn-open-rto-config" class="px-2.5 py-1.5 rounded text-xs font-mono bg-black/60 hover:bg-slate-900 text-slate-300 border border-white/10 hover:border-[#00ff88]/40 flex items-center gap-1.5 transition-all" title="Configure RapidAPI Indian RTO Gateway">
+                    <i data-lucide="globe" class="w-3.5 h-3.5 text-[#00ff88]"></i>
+                    <span class="hidden sm:inline">RTO Vahan</span>
                 </button>
 
                 <!-- Mobile Connect QR Trigger -->
-                <button id="btn-open-qr" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 transition-all">
-                    <i data-lucide="smartphone" class="w-3.5 h-3.5 text-indigo-400"></i>
-                    <span class="hidden sm:inline">Mobile Connect</span>
+                <button id="btn-open-qr" class="px-2.5 py-1.5 rounded text-xs font-mono font-bold bg-cyan-950/40 hover:bg-cyan-900/40 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5 transition-all" title="Connect Phone Camera">
+                    <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Mobile QR</span>
                 </button>
 
                 <!-- Audio Mute Switch -->
-                <button id="btn-mute-toggle" title="Toggle Sound FX" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors">
+                <button id="btn-mute-toggle" title="Toggle Audio FX" class="p-1.5 sm:p-2 rounded bg-black/60 hover:bg-slate-900 text-slate-400 hover:text-white border border-white/10 transition-colors">
                     <i data-lucide="volume-2" class="w-4 h-4 text-slate-300"></i>
                 </button>
 
-                <!-- Live Clock -->
-                <div class="text-right hidden md:block">
-                    <div id="live-time" class="text-xs font-mono font-bold text-slate-200">16:00:00 IST</div>
-                    <div class="text-[10px] text-slate-400">MAIN GATE CAM-01</div>
+                <!-- Live Clock & Station Operator -->
+                <div class="text-right hidden sm:block pl-3 border-l border-white/10">
+                    <div id="live-time" class="text-xs font-mono font-bold text-white tracking-wide">18:00:00 IST</div>
+                    <div class="text-[10px] font-mono text-[#00ff88] flex items-center justify-end gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>
+                        <span>OPERATOR: POST #01</span>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main App Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5">
+    <!-- =====================================================================
+         MAIN COMMAND CENTER LAYOUT (SIDEBAR + WORKSPACE)
+         ===================================================================== -->
+    <div class="flex-1 flex overflow-hidden">
 
-        <!-- KPI Quick Metric Counters (4-Cards) -->
-        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div class="glass-card rounded-xl p-3.5 sm:p-4 flex items-center justify-between shadow-sm">
-                <div>
-                    <p class="text-[11px] sm:text-xs font-medium text-slate-400">Total Entries (Arrivals)</p>
-                    <h3 id="stat-total-entries" class="text-xl sm:text-2xl font-bold text-emerald-400 mt-0.5 font-mono">0</h3>
-                </div>
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                    <i data-lucide="log-in" class="w-5 h-5"></i>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-3.5 sm:p-4 flex items-center justify-between shadow-sm">
-                <div>
-                    <p class="text-[11px] sm:text-xs font-medium text-slate-400">Total Exits (Departures)</p>
-                    <h3 id="stat-total-exits" class="text-xl sm:text-2xl font-bold text-amber-400 mt-0.5 font-mono">0</h3>
-                </div>
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                    <i data-lucide="log-out" class="w-5 h-5"></i>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-3.5 sm:p-4 flex items-center justify-between shadow-sm">
-                <div>
-                    <p class="text-[11px] sm:text-xs font-medium text-slate-400">Currently Parked / Inside</p>
-                    <h3 id="stat-currently-inside" class="text-xl sm:text-2xl font-bold text-cyan-400 mt-0.5 font-mono">0</h3>
-                </div>
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
-                    <i data-lucide="parking-circle" class="w-5 h-5"></i>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-3.5 sm:p-4 flex items-center justify-between shadow-sm">
-                <div>
-                    <p class="text-[11px] sm:text-xs font-medium text-slate-400">Security Alerts / Denied</p>
-                    <h3 id="stat-denied-count" class="text-xl sm:text-2xl font-bold text-rose-400 mt-0.5 font-mono">0</h3>
-                </div>
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
-                </div>
-            </div>
-        </section>
-
-        <!-- Primary View Navigation Tabs -->
-        <nav class="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto pb-1 border-b border-slate-800/80">
-            <button data-view="dashboard" class="nav-view-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2 shrink-0">
-                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                <span>Live Boom Barrier</span>
-            </button>
-            <button data-view="active-sessions" class="nav-view-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2 shrink-0">
-                <i data-lucide="parking-circle" class="w-4 h-4 text-cyan-400"></i>
-                <span>Currently Inside (<span id="badge-inside-count">0</span>)</span>
-            </button>
-            <button data-view="logs" class="nav-view-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2 shrink-0">
-                <i data-lucide="history" class="w-4 h-4 text-indigo-400"></i>
-                <span>Entry & Exit Audit Log</span>
-            </button>
-            <button data-view="registry" class="nav-view-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2 shrink-0">
-                <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
-                <span>Vahan & RTO Registry</span>
-            </button>
-        </nav>
-
-        <!-- ========================================================= -->
-        <!-- VIEW 1: LIVE SCANNER & BOOM BARRIER DASHBOARD -->
-        <!-- ========================================================= -->
-        <div id="view-dashboard" class="view-panel space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- LEFT COLUMN: Video Stream & Vision Engine (7 Cols) -->
-                <div class="lg:col-span-7 space-y-4">
-                    <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col space-y-4 border border-slate-800 shadow-xl">
-                        
-                        <!-- Stream Source Switcher Tabs -->
-                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                            <div class="flex items-center space-x-1 p-1 bg-slate-900 rounded-xl border border-slate-800">
-                                <button data-source="webcam" class="source-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 transition-all">
-                                    <i data-lucide="video" class="w-3.5 h-3.5"></i>
-                                    <span>Camera</span>
-                                </button>
-                                <button data-source="simulator" class="source-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition-all">
-                                    <i data-lucide="car" class="w-3.5 h-3.5"></i>
-                                    <span class="hidden xs:inline">Virtual Sim</span>
-                                </button>
-                                <button data-source="gallery" class="source-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition-all">
-                                    <i data-lucide="grid" class="w-3.5 h-3.5"></i>
-                                    <span>Gallery</span>
-                                </button>
-                                <button data-source="upload" class="source-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition-all">
-                                    <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                    <span>Upload</span>
-                                </button>
-                            </div>
-
-                            <!-- Mobile Camera Tools (Flip & Mobile Snap) -->
-                            <div class="flex items-center space-x-2">
-                                <button id="btn-flip-camera" title="Switch Front/Back Camera" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1">
-                                    <i data-lucide="refresh-ccw" class="w-3.5 h-3.5 text-cyan-400"></i>
-                                    <span class="hidden sm:inline">Flip Cam</span>
-                                </button>
-
-                                <label for="mobile-camera-capture" class="cursor-pointer px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 sm:hidden">
-                                    <i data-lucide="camera" class="w-3.5 h-3.5"></i>
-                                    <span>Snap</span>
-                                </label>
-                                <input type="file" id="mobile-camera-capture" accept="image/*" capture="environment" class="hidden">
-                                <input type="file" id="file-upload-input" accept="image/*" class="hidden">
-                            </div>
-                        </div>
-
-                        <!-- Canvas Feed Container with Laser Overlay -->
-                        <div class="relative w-full aspect-video bg-slate-900 rounded-xl overflow-hidden border border-slate-800/80 shadow-inner flex items-center justify-center group">
-                            <video id="webcam-video" autoplay playsinline muted class="hidden"></video>
-                            <canvas id="feed-canvas" width="640" height="360" class="w-full h-full object-contain"></canvas>
-
-                            <!-- Laser Scan Effect -->
-                            <div class="laser-scanner"></div>
-
-                            <!-- Overlays -->
-                            <div class="absolute top-2.5 left-2.5 px-2 py-1 rounded bg-black/60 backdrop-blur-sm border border-white/10 text-[10px] font-mono text-emerald-400 flex items-center gap-1.5">
-                                <i data-lucide="crosshair" class="w-3 h-3 text-emerald-400"></i>
-                                <span>EASYOCR + RAPIDAPI GATEWAY</span>
-                            </div>
-
-                            <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm border border-white/10 text-[10px] font-mono text-slate-300">
-                                <span>5-Min Auto Exit Rule Active</span>
-                            </div>
-                        </div>
-
-                        <!-- Gallery Selector Grid -->
-                        <div id="gallery-container" class="hidden space-y-2 pt-2 border-t border-slate-800">
-                            <p class="text-xs text-slate-400 font-medium">Click any test car/plate to simulate arrival or departure:</p>
-                            <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-48 overflow-y-auto pr-1"></div>
-                        </div>
-
-                        <div id="webcam-controls" class="flex items-center justify-between text-xs text-slate-400 pt-0.5">
-                            <div class="flex items-center space-x-1.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                                <span>Camera Active • First-Time RapidAPI Cache Ready</span>
-                            </div>
-                            <span class="text-slate-500 font-mono text-[11px]">2-Frame Consensus Deque</span>
-                        </div>
-                    </div>
+        <!-- LEFT COMPACT NAVIGATION SIDEBAR -->
+        <aside class="w-56 xl:w-60 bg-[#05080e]/95 border-r border-white/10 flex-col justify-between p-3 hidden md:flex shrink-0">
+            <div class="space-y-5">
+                <!-- Section Label -->
+                <div class="px-2 pt-1 flex items-center justify-between">
+                    <p class="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500">OPERATIONS NAV</p>
+                    <span class="w-2 h-2 rounded-full bg-[#00ff88]/60 animate-pulse"></span>
                 </div>
 
-                <!-- RIGHT COLUMN: Boom Barrier Visualizer & Vehicle Telemetry (5 Cols) -->
-                <div class="lg:col-span-5 space-y-6">
-
-                    <!-- 1. Interactive SVG Boom Barrier Simulator -->
-                    <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                            <div class="flex items-center space-x-2">
-                                <i data-lucide="git-commit" class="w-4 h-4 text-indigo-400"></i>
-                                <h3 class="text-xs sm:text-sm font-bold text-slate-200">AUTOMATIC BOOM BARRIER</h3>
-                            </div>
-                            
-                            <!-- LED Signal Lights -->
-                            <div class="flex items-center space-x-2 p-1 bg-slate-900 rounded-lg border border-slate-800">
-                                <div id="led-red-light" class="w-4 h-4 rounded-full bg-red-500 led-red transition-all" title="Closed (Red)"></div>
-                                <div id="led-green-light" class="w-4 h-4 rounded-full bg-emerald-950 opacity-40 transition-all" title="Open (Green)"></div>
-                            </div>
-                        </div>
-
-                        <!-- Barrier Graphic SVG -->
-                        <div class="relative w-full h-40 sm:h-44 bg-gradient-to-b from-slate-900 to-slate-950 rounded-xl border border-slate-800/80 p-2 flex items-center justify-center overflow-hidden">
-                            <svg viewBox="0 0 400 180" class="w-full h-full">
-                                <rect x="0" y="140" width="400" height="40" fill="#1e293b" />
-                                <line x1="0" y1="160" x2="400" y2="160" stroke="#475569" stroke-width="2" stroke-dasharray="10 10" />
-
-                                <rect x="120" y="145" width="160" height="25" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4 4" rx="3" />
-                                <text x="200" y="162" fill="#38bdf8" font-size="9" font-family="JetBrains Mono" text-anchor="middle" font-weight="bold">INDUCTION SENSOR</text>
-
-                                <!-- Base Post -->
-                                <g>
-                                    <rect x="40" y="130" width="50" height="15" fill="#334155" rx="2" />
-                                    <rect x="50" y="55" width="30" height="80" fill="#475569" rx="4" />
-                                    <rect x="53" y="60" width="24" height="70" fill="#64748b" rx="2" />
-                                    <circle cx="65" cy="72" r="4" fill="#ef4444" />
-                                    <circle cx="65" cy="84" r="4" fill="#10b981" />
-                                    <circle cx="65" cy="140" r="14" fill="#1e293b" stroke="#94a3b8" stroke-width="3" />
-                                    <circle cx="65" cy="140" r="6" fill="#f8fafc" />
-                                </g>
-
-                                <!-- Rotatable Arm -->
-                                <g id="barrier-arm-svg" class="barrier-arm">
-                                    <rect x="65" y="134" width="280" height="12" fill="#ef4444" rx="3" />
-                                    <polygon points="100,134 125,134 110,146 85,146" fill="#ffffff" />
-                                    <polygon points="150,134 175,134 160,146 135,146" fill="#ffffff" />
-                                    <polygon points="200,134 225,134 210,146 185,146" fill="#ffffff" />
-                                    <polygon points="250,134 275,134 260,146 235,146" fill="#ffffff" />
-                                    <polygon points="300,134 325,134 310,146 285,146" fill="#ffffff" />
-                                    <rect x="340" y="132" width="8" height="16" fill="#0f172a" rx="2" />
-                                </g>
-
-                                <g>
-                                    <rect x="350" y="110" width="16" height="35" fill="#334155" rx="2" />
-                                    <rect x="348" y="105" width="20" height="8" fill="#475569" rx="2" />
-                                </g>
-                            </svg>
-                            <div class="absolute bottom-6 left-28 right-12 h-0.5 bg-cyan-400/40 shadow-[0_0_8px_#38bdf8] pointer-events-none"></div>
-                        </div>
-
-                        <!-- Barrier Status & Manual Operator Buttons -->
-                        <div class="space-y-3 pt-1">
-                            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs font-medium text-center text-slate-300">
-                                <span id="gate-message">System Initialized • Awaiting Vehicle Plate Recognition</span>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <button id="btn-manual-open" class="py-2 px-3 rounded-lg text-xs font-bold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all">
-                                    <i data-lucide="lock-open" class="w-3.5 h-3.5"></i>
-                                    <span>FORCE OPEN</span>
-                                </button>
-                                <button id="btn-manual-close" class="py-2 px-3 rounded-lg text-xs font-bold bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 flex items-center justify-center gap-1.5 transition-all">
-                                    <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-                                    <span>FORCE CLOSE</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Live Telemetry & Vahan Profile Card -->
-                    <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                            <div class="flex items-center space-x-2">
-                                <i data-lucide="file-badge-2" class="w-4 h-4 text-cyan-400"></i>
-                                <h3 class="text-xs sm:text-sm font-bold text-slate-200">VAHAN TELEMETRY HUD</h3>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <div id="badge-event-type" class="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                                    ARRIVAL (ENTRY)
-                                </div>
-                                <div id="badge-access-status" class="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase bg-slate-800 text-slate-400 border border-slate-700">
-                                    STANDBY
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Embossed Plate Display -->
-                        <div class="flex justify-center py-1">
-                            <div id="hsrp-plate-box" class="hsrp-plate px-4 py-2 text-xl sm:text-2xl font-mono">
-                                <div class="hsrp-ind-strip mr-3">
-                                    <div class="hsrp-chakra"></div>
-                                    <span class="text-[9px] font-black tracking-tighter">IND</span>
-                                </div>
-                                <span id="hsrp-plate-text">MH 12 AB 1234</span>
-                            </div>
-                        </div>
-
-                        <!-- Consensus Stabilization Meter -->
-                        <div class="space-y-1.5 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                            <div class="flex justify-between text-xs">
-                                <span class="text-slate-400 font-medium">Temporal Stabilization:</span>
-                                <span id="consensus-count-text" class="text-indigo-400 font-mono font-bold">0 / 2 Frames Consensus</span>
-                            </div>
-                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="consensus-progress-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%"></div>
-                            </div>
-                        </div>
-
-                        <!-- Telemetry Grid -->
-                        <div class="grid grid-cols-2 gap-2.5 text-xs">
-                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
-                                <p class="text-slate-500 text-[10px] uppercase font-bold">Registered Owner</p>
-                                <p id="val-owner-name" class="font-semibold text-slate-200 mt-0.5 truncate">Rajesh Sharma</p>
-                            </div>
-                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
-                                <p class="text-slate-500 text-[10px] uppercase font-bold">Vehicle Model</p>
-                                <p id="val-vehicle-model" class="font-semibold text-slate-200 mt-0.5 truncate">Tata Harrier XZA+</p>
-                            </div>
-                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
-                                <p class="text-slate-500 text-[10px] uppercase font-bold">Fuel / City</p>
-                                <p id="val-fuel-type" class="font-semibold text-slate-200 mt-0.5 truncate">Diesel • <span id="val-reg-city">Pune Central</span></p>
-                            </div>
-                            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
-                                <p class="text-slate-500 text-[10px] uppercase font-bold">Stay / Gate Action</p>
-                                <p id="val-stay-duration" class="font-semibold text-cyan-400 mt-0.5 truncate">Entering Premises</p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================================= -->
-        <!-- VIEW 2: CURRENTLY PARKED / INSIDE SESSIONS -->
-        <!-- ========================================================= -->
-        <div id="view-active-sessions" class="view-panel hidden space-y-4">
-            <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-                    <div class="flex items-center space-x-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                            <i data-lucide="parking-circle" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-sm sm:text-base font-bold text-slate-100">Vehicles Currently Inside Premises</h3>
-                            <p class="text-xs text-slate-400">Live duration timers & 5-minute exit eligibility rules</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="active-sessions-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
-                <div id="active-sessions-empty" class="py-12 text-center text-slate-500 text-sm hidden">
-                    <i data-lucide="check-circle" class="w-10 h-10 text-slate-600 mx-auto mb-2"></i>
-                    <p>No vehicles currently inside premises. All parking spots available.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================================= -->
-        <!-- VIEW 3: ENTRY & EXIT AUDIT LOGS -->
-        <!-- ========================================================= -->
-        <div id="view-logs" class="view-panel hidden space-y-4">
-            <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-                    <div class="flex items-center space-x-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                            <i data-lucide="history" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-sm sm:text-base font-bold text-slate-100">Entry & Exit Telemetry History</h3>
-                            <p class="text-xs text-slate-400">Detailed arrival, departure, and stay duration timestamps</p>
-                        </div>
-                    </div>
-
-                    <!-- Search & Filter Bar -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="relative">
-                            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input id="log-search-input" type="text" placeholder="Search plate, owner..." class="pl-8 pr-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-36 sm:w-48">
-                        </div>
-
-                        <select id="log-filter-status" class="py-1.5 px-2.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-200">
-                            <option value="ALL">All Events</option>
-                            <option value="ENTRY">Arrivals (Entry)</option>
-                            <option value="EXIT">Departures (Exit)</option>
-                            <option value="SECURITY_ALERT">Security Alerts</option>
-                        </select>
-
-                        <button id="btn-refresh-logs" title="Refresh" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 border border-slate-700">
-                            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
-                        </button>
-
-                        <button id="btn-export-csv" class="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg flex items-center gap-1.5 shadow-sm">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                            <span class="hidden sm:inline">Export CSV</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Logs Table -->
-                <div class="overflow-x-auto rounded-xl border border-slate-800/80">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-900/90 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
-                                <th class="py-3 px-3 sm:px-4">Timestamp</th>
-                                <th class="py-3 px-3 sm:px-4">Event</th>
-                                <th class="py-3 px-3 sm:px-4">Plate Crop</th>
-                                <th class="py-3 px-3 sm:px-4">Plate Number</th>
-                                <th class="py-3 px-3 sm:px-4">Owner Profile</th>
-                                <th class="py-3 px-3 sm:px-4">Stay Duration</th>
-                                <th class="py-3 px-3 sm:px-4">Gate Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logs-table-body" class="divide-y divide-slate-800/50"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================================= -->
-        <!-- VIEW 4: VAHAN & RTO REGISTRY DATABASE -->
-        <!-- ========================================================= -->
-        <div id="view-registry" class="view-panel hidden space-y-6">
-            
-            <!-- RapidAPI Status & Cache Summary Banner -->
-            <div class="glass-card rounded-2xl p-4 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                        <i data-lucide="database-zap" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h4 class="text-sm font-bold text-slate-100">RapidAPI Indian RTO Gateway</h4>
-                            <div id="rto-status-pill" class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase bg-slate-800 text-slate-400">
-                                CHECKING...
-                            </div>
-                        </div>
-                        <p class="text-xs text-slate-400 mt-0.5">First-time visitor vehicles are resolved live via RapidAPI and cached permanently in SQLite to save API calls.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
-                    <div class="text-right">
-                        <div class="text-xs font-mono font-bold text-emerald-400"><span id="rto-cache-hits-text">0</span> Cache Hits (0 API Calls)</div>
-                        <div class="text-[11px] text-slate-500"><span id="rto-queries-text">0</span> First-Time External Queries</div>
-                    </div>
-                    <button onclick="showRTOModal()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition-colors">
-                        Configure API
+                <!-- Navigation Buttons -->
+                <nav class="space-y-1 font-mono text-xs">
+                    <!-- 1. Live Dashboard -->
+                    <button data-view="dashboard" class="sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 transition-all text-white bg-white/5 border-l-2 border-[#00ff88]">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#00ff88]"></i>
+                        <span>Dashboard</span>
                     </button>
-                </div>
+
+                    <!-- 2. Live Gate Camera -->
+                    <button data-view="dashboard" class="sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                        <i data-lucide="video" class="w-4 h-4 text-cyan-400"></i>
+                        <span>Live Gate</span>
+                    </button>
+
+                    <!-- 3. Vehicles Currently Inside -->
+                    <button data-view="active-sessions" class="sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center justify-between text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="car" class="w-4 h-4 text-cyan-400"></i>
+                            <span>Vehicles Inside</span>
+                        </div>
+                        <span id="sidebar-inside-count" class="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 text-[10px] font-bold border border-cyan-500/30">0</span>
+                    </button>
+
+                    <!-- 4. Sessions & Audit Logs -->
+                    <button data-view="logs" class="sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                        <i data-lucide="history" class="w-4 h-4 text-indigo-400"></i>
+                        <span>Audit Sessions</span>
+                    </button>
+
+                    <!-- 5. Vahan & RTO Registry -->
+                    <button data-view="registry" class="sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                        <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Vahan Registry</span>
+                    </button>
+
+                    <!-- 6. Blacklist Quick View -->
+                    <button id="sidebar-btn-blacklist" class="w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 border-l-2 border-transparent transition-all">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
+                        <span>Blacklist Filter</span>
+                    </button>
+
+                    <!-- 7. Export Logs CSV -->
+                    <button id="sidebar-btn-export" class="w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-amber-400"></i>
+                        <span>Export Logs CSV</span>
+                    </button>
+
+                    <!-- 8. System Settings -->
+                    <button onclick="showRTOModal()" class="w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                        <i data-lucide="sliders" class="w-4 h-4 text-slate-400"></i>
+                        <span>RTO Settings</span>
+                    </button>
+                </nav>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add Vehicle Form -->
-                <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-4">
-                    <div class="flex items-center space-x-2 border-b border-slate-800 pb-3">
-                        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i>
-                        <h3 class="text-sm font-bold text-slate-200">Register New Vehicle</h3>
-                    </div>
-
-                    <form id="add-vehicle-form" class="space-y-3 text-xs">
-                        <div>
-                            <label class="block text-slate-400 font-medium mb-1">License Plate Number</label>
-                            <input name="plate_number" required placeholder="e.g. MH 12 AB 1234" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 font-mono uppercase focus:border-indigo-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 font-medium mb-1">Owner Full Name</label>
-                            <input name="owner_name" required placeholder="e.g. Dr. Rajesh Sharma" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-indigo-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 font-medium mb-1">Vehicle Model & Make</label>
-                            <input name="vehicle_model" required placeholder="e.g. Tata Harrier XZA+" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-indigo-500 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-slate-400 font-medium mb-1">Fuel Type</label>
-                                <select name="fuel_type" class="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-indigo-500 focus:outline-none">
-                                    <option value="Petrol">Petrol</option>
-                                    <option value="Diesel">Diesel</option>
-                                    <option value="EV">EV (Electric)</option>
-                                    <option value="CNG">CNG</option>
-                                    <option value="Hybrid">Hybrid</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-400 font-medium mb-1">Access Level</label>
-                                <select name="access_status" class="w-full px-2.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-indigo-500 focus:outline-none">
-                                    <option value="AUTHORIZED">AUTHORIZED</option>
-                                    <option value="VIP">VIP</option>
-                                    <option value="GUEST">GUEST</option>
-                                    <option value="BLACKLISTED">BLACKLISTED</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 font-medium mb-1">Registration City & RTO</label>
-                            <input name="registration_city" required placeholder="e.g. Pune Central, Maharashtra" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:border-indigo-500 focus:outline-none">
-                        </div>
-
-                        <button type="submit" class="w-full py-2.5 mt-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition-colors">
-                            Save to Vahan Registry
-                        </button>
-                    </form>
+            <!-- Sidebar Bottom: System Overview / Health Indicators -->
+            <div class="border-t border-white/10 pt-4 space-y-3 font-mono text-[11px]">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] uppercase font-bold text-slate-500">SYSTEM HEALTH</span>
+                    <span class="text-[#00ff88] text-[10px] font-bold">99.98% UPTIME</span>
                 </div>
 
-                <!-- Directory Table -->
-                <div class="lg:col-span-2 glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="book-marked" class="w-4 h-4 text-cyan-400"></i>
-                            <h3 class="text-sm font-bold text-slate-200">Cached Indian Vahan Registry</h3>
-                        </div>
-                        <div class="relative">
-                            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input id="registry-search-input" type="text" placeholder="Search registry..." class="pl-8 pr-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-200 focus:outline-none w-44">
+                <div class="space-y-1.5 text-slate-400">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>Camera Feed</span>
+                        <span class="text-slate-300 font-bold">ONLINE</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>ANPR Model</span>
+                        <span class="text-slate-300 font-bold">ONLINE</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>Database</span>
+                        <span class="text-slate-300 font-bold">ONLINE</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>COM4 Relay</span>
+                        <span class="text-slate-300 font-bold">ACTIVE</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>RTO Vahan</span>
+                        <span class="text-slate-300 font-bold">SYNCED</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEWPORT CONTENT -->
+        <main class="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6 space-y-5">
+
+            <!-- 1. TELEMETRY STAT CARDS (4 SYSTEM METRIC PANELS) -->
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <!-- Card 1: Total Ingress -->
+                <div class="glass-panel reticle-box rounded-lg p-3.5 sm:p-4 flex flex-col justify-between border border-white/10 hover:border-[#00ff88]/40 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">TELEMETRY // 01 • INGRESS</span>
+                        <span class="w-2 h-2 rounded-full bg-[#00ff88]"></span>
+                    </div>
+                    <div class="my-1 flex items-baseline justify-between">
+                        <h3 id="stat-total-entries" class="text-2xl sm:text-4xl font-black text-[#00ff88] font-mono">0</h3>
+                        <i data-lucide="log-in" class="w-5 h-5 text-[#00ff88]/60"></i>
+                    </div>
+                    <p class="text-[10px] font-mono text-slate-400 truncate">+8.4% Peak Flow • Verified Entry</p>
+                </div>
+
+                <!-- Card 2: Total Egress -->
+                <div class="glass-panel reticle-box rounded-lg p-3.5 sm:p-4 flex flex-col justify-between border border-white/10 hover:border-amber-400/40 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">TELEMETRY // 02 • EGRESS</span>
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    </div>
+                    <div class="my-1 flex items-baseline justify-between">
+                        <h3 id="stat-total-exits" class="text-2xl sm:text-4xl font-black text-amber-400 font-mono">0</h3>
+                        <i data-lucide="log-out" class="w-5 h-5 text-amber-400/60"></i>
+                    </div>
+                    <p class="text-[10px] font-mono text-slate-400 truncate">5-Min Dwell Enforced • Auto Checkout</p>
+                </div>
+
+                <!-- Card 3: Current Occupancy -->
+                <div class="glass-panel reticle-box reticle-box-cyan rounded-lg p-3.5 sm:p-4 flex flex-col justify-between border border-cyan-500/30 hover:border-cyan-400/60 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">TELEMETRY // 03 • OCCUPANCY</span>
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    </div>
+                    <div class="my-1 flex items-baseline justify-between">
+                        <h3 id="stat-currently-inside" class="text-2xl sm:text-4xl font-black text-cyan-400 font-mono">0</h3>
+                        <i data-lucide="parking-circle" class="w-5 h-5 text-cyan-400/60"></i>
+                    </div>
+                    <p class="text-[10px] font-mono text-slate-400 truncate"><span id="badge-inside-count">0</span> Active Bays Occupied</p>
+                </div>
+
+                <!-- Card 4: Security Alerts -->
+                <div class="glass-panel reticle-box rounded-lg p-3.5 sm:p-4 flex flex-col justify-between border border-red-500/30 hover:border-red-400/60 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">TELEMETRY // 04 • ALERTS</span>
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    </div>
+                    <div class="my-1 flex items-baseline justify-between">
+                        <h3 id="stat-denied-count" class="text-2xl sm:text-4xl font-black text-rose-400 font-mono">0</h3>
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400/60"></i>
+                    </div>
+                    <p class="text-[10px] font-mono text-slate-400 truncate">Zero Breaches • Real-Time Audit</p>
+                </div>
+            </section>
+
+            <!-- 2. PRIMARY VIEW NAVIGATION TABS (RESPONSIVE) -->
+            <nav class="flex items-center space-x-2 overflow-x-auto pb-1 border-b border-white/10 font-heading text-xs sm:text-sm">
+                <button data-view="dashboard" class="nav-view-btn px-4 py-2 rounded text-xs font-mono font-bold bg-[#00ff88] text-[#030508] shadow-[0_0_15px_rgba(0,255,136,0.25)] transition-all flex items-center gap-2 shrink-0">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Live Gate & Boom Barrier</span>
+                </button>
+                <button data-view="active-sessions" class="nav-view-btn px-4 py-2 rounded text-xs font-mono font-semibold text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent transition-all flex items-center gap-2 shrink-0">
+                    <i data-lucide="parking-circle" class="w-4 h-4 text-cyan-400"></i>
+                    <span>Vehicles Inside</span>
+                </button>
+                <button data-view="logs" class="nav-view-btn px-4 py-2 rounded text-xs font-mono font-semibold text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent transition-all flex items-center gap-2 shrink-0">
+                    <i data-lucide="history" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Entry & Exit Audit Log</span>
+                </button>
+                <button data-view="registry" class="nav-view-btn px-4 py-2 rounded text-xs font-mono font-semibold text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent transition-all flex items-center gap-2 shrink-0">
+                    <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Vahan & RTO Registry</span>
+                </button>
+            </nav>
+
+            <!-- ========================================================= -->
+            <!-- VIEW 1: LIVE SCANNER & BOOM BARRIER DASHBOARD -->
+            <!-- ========================================================= -->
+            <div id="view-dashboard" class="view-panel space-y-5">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+                    <!-- LEFT COLUMN: LIVE ANPR CAMERA CENTERPIECE (7 Cols) -->
+                    <div class="lg:col-span-7 xl:col-span-7 space-y-4">
+                        <div class="glass-panel reticle-box rounded-lg p-3.5 sm:p-4 flex flex-col space-y-3.5 border border-white/10 shadow-2xl">
+                            
+                            <!-- Stream Source Switcher Tabs & Camera Tools -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                                <div class="flex items-center space-x-1 p-1 bg-black/80 rounded border border-white/10 font-mono text-xs">
+                                    <button data-source="webcam" class="source-tab-btn px-3 py-1.5 rounded font-bold bg-[#00ff88] text-[#030508] shadow-sm flex items-center gap-1.5 transition-all">
+                                        <i data-lucide="video" class="w-3.5 h-3.5"></i>
+                                        <span>Live Camera</span>
+                                    </button>
+                                    <button data-source="simulator" class="source-tab-btn px-3 py-1.5 rounded font-medium text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1.5 transition-all">
+                                        <i data-lucide="car" class="w-3.5 h-3.5"></i>
+                                        <span class="hidden xs:inline">Virtual Sim</span>
+                                    </button>
+                                    <button data-source="gallery" class="source-tab-btn px-3 py-1.5 rounded font-medium text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1.5 transition-all">
+                                        <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                                        <span>Fleet Gallery</span>
+                                    </button>
+                                    <button data-source="upload" class="source-tab-btn px-3 py-1.5 rounded font-medium text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1.5 transition-all">
+                                        <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                        <span>Upload</span>
+                                    </button>
+                                </div>
+
+                                <!-- Mobile Camera Tools (Flip & Mobile Snap) -->
+                                <div class="flex items-center space-x-2 font-mono text-xs">
+                                    <button id="btn-flip-camera" title="Switch Front/Back Camera" class="px-2.5 py-1.5 rounded bg-black/60 hover:bg-slate-900 text-slate-300 border border-white/10 flex items-center gap-1">
+                                        <i data-lucide="refresh-ccw" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                        <span class="hidden sm:inline">Flip Cam</span>
+                                    </button>
+
+                                    <label for="mobile-camera-capture" class="cursor-pointer px-2.5 py-1.5 rounded font-bold bg-emerald-950/60 hover:bg-emerald-900/60 text-[#00ff88] border border-[#00ff88]/30 flex items-center gap-1 sm:hidden">
+                                        <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                                        <span>Snap</span>
+                                    </label>
+                                    <input type="file" id="mobile-camera-capture" accept="image/*" capture="environment" class="hidden">
+                                    <input type="file" id="file-upload-input" accept="image/*" class="hidden">
+                                </div>
+                            </div>
+
+                            <!-- MAIN CAMERA CANVAS VIEWPORT (COMMAND CENTER CENTERPIECE) -->
+                            <div class="relative w-full aspect-video bg-[#020408] rounded overflow-hidden border border-white/12 shadow-2xl flex items-center justify-center group">
+                                <video id="webcam-video" autoplay playsinline muted class="hidden"></video>
+                                <canvas id="feed-canvas" width="640" height="360" class="w-full h-full object-contain"></canvas>
+
+                                <!-- Laser Scan Effect -->
+                                <div class="laser-scanner"></div>
+
+                                <!-- Technical HUD Reticles (Top-Left) -->
+                                <div class="absolute top-2.5 left-2.5 flex items-center gap-2 pointer-events-none z-10">
+                                    <div class="px-2.5 py-1 rounded bg-black/85 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#00ff88] flex items-center gap-1.5 shadow-lg">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                        <span class="font-bold">LIVE FEED // CAM-01</span>
+                                    </div>
+                                    <div class="px-2 py-1 rounded bg-black/85 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-300">
+                                        <span>640x360 SENSOR</span>
+                                    </div>
+                                </div>
+
+                                <!-- Computer-Vision Target Detection HUD Card (Top-Right of Camera) -->
+                                <div id="cv-live-detection-hud" class="absolute top-2.5 right-2.5 max-w-[240px] w-full p-2.5 rounded bg-black/90 backdrop-blur-md border border-[#00ff88]/40 text-left font-mono text-xs pointer-events-none shadow-2xl z-10 transition-all">
+                                    <div class="flex items-center justify-between border-b border-white/10 pb-1.5 mb-1.5">
+                                        <span class="text-[9px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                                            <i data-lucide="crosshair" class="w-3 h-3 text-[#00ff88]"></i>
+                                            <span id="cv-hud-header">TARGET LOCK</span>
+                                        </span>
+                                        <span id="cv-hud-status" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950 text-[#00ff88] border border-[#00ff88]/40">STANDBY</span>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between items-center text-[10px]">
+                                            <span class="text-slate-500">PLATE:</span>
+                                            <span id="cv-hud-plate" class="font-bold text-white tracking-wider">AWAITING TARGET</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[10px]">
+                                            <span class="text-slate-500">CONFIDENCE:</span>
+                                            <span id="cv-hud-conf" class="font-bold text-cyan-400">—</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[10px]">
+                                            <span class="text-slate-500">ENGINE:</span>
+                                            <span class="text-slate-300">CharlesWright CNN</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Technical Indicators on Camera -->
+                                <div class="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded bg-black/85 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-400 pointer-events-none z-10">
+                                    <span>EASYOCR + PYTORCH CNN PIPELINE</span>
+                                </div>
+
+                                <div class="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded bg-black/85 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#00ff88] pointer-events-none z-10">
+                                    <span>5-MIN AUTO EXIT ENFORCED</span>
+                                </div>
+                            </div>
+
+                            <!-- Gallery Selector Grid -->
+                            <div id="gallery-container" class="hidden space-y-2 pt-2 border-t border-white/10">
+                                <p class="text-xs font-mono text-slate-400">Simulate vehicle entry or departure from repository test fleet:</p>
+                                <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-48 overflow-y-auto pr-1"></div>
+                            </div>
+
+                            <!-- Status line below camera -->
+                            <div id="webcam-controls" class="flex items-center justify-between text-xs font-mono text-slate-400 pt-0.5">
+                                <div class="flex items-center space-x-2">
+                                    <span class="status-beacon-emerald"></span>
+                                    <span>OPTICAL SHUTTER ACTIVE • DUAL CONSENSUS DEQUE</span>
+                                </div>
+                                <span class="text-cyan-400">RAPIDAPI VAHAN SYNC READY</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+                    <!-- RIGHT COLUMN: SMART BOOM BARRIER & VAHAN TELEMETRY (5 Cols) -->
+                    <div class="lg:col-span-5 xl:col-span-5 space-y-4">
+
+                        <!-- 1. SMART BOOM BARRIER VISUALIZATION -->
+                        <div class="glass-panel reticle-box rounded-lg p-3.5 sm:p-4 border border-white/10 shadow-2xl space-y-3.5">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="git-commit" class="w-4 h-4 text-[#00ff88]"></i>
+                                    <h3 class="text-xs sm:text-sm font-mono font-bold text-white uppercase tracking-wider">SMART BOOM BARRIER</h3>
+                                </div>
+                                
+                                <!-- LED Signal Lights -->
+                                <div class="flex items-center space-x-2 p-1.5 bg-black rounded border border-white/10">
+                                    <div id="led-red-light" class="w-3.5 h-3.5 rounded-full bg-red-500 led-red transition-all" title="Closed (Red)"></div>
+                                    <div id="led-green-light" class="w-3.5 h-3.5 rounded-full bg-emerald-950 opacity-40 transition-all" title="Open (Green)"></div>
+                                </div>
+                            </div>
+
+                            <!-- Physical Barrier Graphic SVG -->
+                            <div class="relative w-full h-36 sm:h-40 bg-gradient-to-b from-[#070c16] to-[#03060a] rounded border border-white/10 p-2 flex items-center justify-center overflow-hidden">
+                                <svg viewBox="0 0 400 180" class="w-full h-full">
+                                    <rect x="0" y="140" width="400" height="40" fill="#0c111c" />
+                                    <line x1="0" y1="160" x2="400" y2="160" stroke="#1e293b" stroke-width="2" stroke-dasharray="10 10" />
+
+                                    <rect x="120" y="145" width="160" height="25" fill="#030508" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="4 4" rx="3" />
+                                    <text x="200" y="162" fill="#00e5ff" font-size="9" font-family="JetBrains Mono" text-anchor="middle" font-weight="bold">INDUCTION SENSOR</text>
+
+                                    <!-- Base Post -->
+                                    <g>
+                                        <rect x="40" y="130" width="50" height="15" fill="#1e293b" rx="2" />
+                                        <rect x="50" y="55" width="30" height="80" fill="#0f172a" rx="4" />
+                                        <rect x="53" y="60" width="24" height="70" fill="#1e293b" rx="2" />
+                                        <circle cx="65" cy="72" r="4" fill="#ef4444" />
+                                        <circle cx="65" cy="84" r="4" fill="#00ff88" />
+                                        <circle cx="65" cy="140" r="14" fill="#0f172a" stroke="#475569" stroke-width="3" />
+                                        <circle cx="65" cy="140" r="6" fill="#f8fafc" />
+                                    </g>
+
+                                    <!-- Rotatable Arm -->
+                                    <g id="barrier-arm-svg" class="barrier-arm">
+                                        <rect x="65" y="134" width="280" height="12" fill="#ef4444" rx="3" />
+                                        <polygon points="100,134 125,134 110,146 85,146" fill="#ffffff" />
+                                        <polygon points="150,134 175,134 160,146 135,146" fill="#ffffff" />
+                                        <polygon points="200,134 225,134 210,146 185,146" fill="#ffffff" />
+                                        <polygon points="250,134 275,134 260,146 235,146" fill="#ffffff" />
+                                        <polygon points="300,134 325,134 310,146 285,146" fill="#ffffff" />
+                                        <rect x="340" y="132" width="8" height="16" fill="#0f172a" rx="2" />
+                                    </g>
+
+                                    <g>
+                                        <rect x="350" y="110" width="16" height="35" fill="#1e293b" rx="2" />
+                                        <rect x="348" y="105" width="20" height="8" fill="#334155" rx="2" />
+                                    </g>
+                                </svg>
+                                <div class="absolute bottom-6 left-28 right-12 h-0.5 bg-[#00e5ff]/50 shadow-[0_0_8px_#00e5ff] pointer-events-none"></div>
+                            </div>
+
+                            <!-- Vertical Status Progression (IDLE -> DETECT -> VERIFY -> OPEN) -->
+                            <div class="p-2 rounded bg-black/60 border border-white/10">
+                                <div class="grid grid-cols-4 gap-1.5 font-mono text-[10px] text-center">
+                                    <div id="gate-step-idle" class="p-1.5 rounded bg-emerald-950/50 text-[#00ff88] border border-[#00ff88]/30 font-bold transition-all">
+                                        <div>[01]</div>
+                                        <div>IDLE</div>
+                                    </div>
+                                    <div id="gate-step-detect" class="p-1.5 rounded bg-black/40 text-slate-500 border border-white/5 transition-all">
+                                        <div>[02]</div>
+                                        <div>DETECT</div>
+                                    </div>
+                                    <div id="gate-step-verify" class="p-1.5 rounded bg-black/40 text-slate-500 border border-white/5 transition-all">
+                                        <div>[03]</div>
+                                        <div>VERIFY</div>
+                                    </div>
+                                    <div id="gate-step-open" class="p-1.5 rounded bg-black/40 text-slate-500 border border-white/5 transition-all">
+                                        <div>[04]</div>
+                                        <div>OPEN</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Barrier Status Message & Manual Force Buttons -->
+                            <div class="space-y-2.5">
+                                <div class="p-2.5 rounded bg-black/80 border border-white/10 text-xs font-mono text-center text-slate-300">
+                                    <span id="gate-message">System Initialized • Awaiting Vehicle Plate Recognition</span>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 font-mono">
+                                    <button id="btn-manual-open" class="py-2 px-3 rounded text-xs font-bold bg-emerald-950/40 hover:bg-emerald-900/40 text-[#00ff88] border border-[#00ff88]/30 flex items-center justify-center gap-1.5 transition-all">
+                                        <i data-lucide="lock-open" class="w-3.5 h-3.5"></i>
+                                        <span>FORCE OPEN</span>
+                                    </button>
+                                    <button id="btn-manual-close" class="py-2 px-3 rounded text-xs font-bold bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 border border-rose-500/30 flex items-center justify-center gap-1.5 transition-all">
+                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                        <span>FORCE CLOSE</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. VAHAN TELEMETRY HUD (FUTURISTIC IDENTITY CARD) -->
+                        <div class="glass-panel reticle-box reticle-box-cyan rounded-lg p-3.5 sm:p-4 border border-cyan-500/30 shadow-2xl space-y-3.5">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="file-badge-2" class="w-4 h-4 text-cyan-400"></i>
+                                    <h3 class="text-xs sm:text-sm font-mono font-bold text-white uppercase tracking-wider">VAHAN IDENTITY HUD</h3>
+                                </div>
+                                <div class="flex items-center space-x-1.5 font-mono">
+                                    <div id="badge-event-type" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-950/60 text-[#00ff88] border border-[#00ff88]/40">
+                                        ARRIVAL (ENTRY)
+                                    </div>
+                                    <div id="badge-access-status" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-900 text-slate-400 border border-white/10">
+                                        STANDBY
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Embossed HSRP Plate Display -->
+                            <div class="flex justify-center py-1">
+                                <div id="hsrp-plate-box" class="hsrp-plate px-4 py-2 text-xl sm:text-2xl font-mono">
+                                    <div class="hsrp-ind-strip mr-3">
+                                        <div class="hsrp-chakra"></div>
+                                        <span class="text-[9px] font-black tracking-tighter">IND</span>
+                                    </div>
+                                    <span id="hsrp-plate-text">MH 12 AB 1234</span>
+                                </div>
+                            </div>
+
+                            <!-- Temporal Consensus Stabilization Meter -->
+                            <div class="space-y-1 bg-black/60 p-2.5 rounded border border-white/10">
+                                <div class="flex justify-between text-xs font-mono">
+                                    <span class="text-slate-400 text-[11px]">Temporal Consensus:</span>
+                                    <span id="consensus-count-text" class="text-cyan-400 font-bold text-[11px]">0 / 2 Frames Consensus</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div id="consensus-progress-bar" class="h-full bg-cyan-400 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Vehicle Telemetry Details Grid -->
+                            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                                <div class="bg-black/60 p-2.5 rounded border border-white/10">
+                                    <p class="text-slate-500 text-[9px] uppercase font-bold tracking-wider">REGISTERED OWNER</p>
+                                    <p id="val-owner-name" class="font-semibold text-white mt-0.5 truncate text-xs">Rajesh Sharma</p>
+                                </div>
+                                <div class="bg-black/60 p-2.5 rounded border border-white/10">
+                                    <p class="text-slate-500 text-[9px] uppercase font-bold tracking-wider">VEHICLE MODEL</p>
+                                    <p id="val-vehicle-model" class="font-semibold text-white mt-0.5 truncate text-xs">Tata Harrier XZA+</p>
+                                </div>
+                                <div class="bg-black/60 p-2.5 rounded border border-white/10">
+                                    <p class="text-slate-500 text-[9px] uppercase font-bold tracking-wider">FUEL / CITY</p>
+                                    <p id="val-fuel-type" class="font-semibold text-white mt-0.5 truncate text-xs">Diesel • <span id="val-reg-city">Pune Central</span></p>
+                                </div>
+                                <div class="bg-black/60 p-2.5 rounded border border-white/10">
+                                    <p class="text-slate-500 text-[9px] uppercase font-bold tracking-wider">STAY / ACTION</p>
+                                    <p id="val-stay-duration" class="font-semibold text-[#00ff88] mt-0.5 truncate text-xs">Entering Premises</p>
+                                    <span id="val-gate-action" class="hidden">OPENED</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- LIVE ACTIVITY STREAM PREVIEW ON DASHBOARD -->
+                <div class="glass-panel reticle-box rounded-lg p-3.5 sm:p-4 border border-white/10 shadow-2xl space-y-3">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="activity" class="w-4 h-4 text-[#00ff88]"></i>
+                            <h3 class="text-xs sm:text-sm font-mono font-bold text-white uppercase tracking-wider">LIVE INGRESS / EGRESS STREAM</h3>
+                        </div>
+                        <button data-view="logs" class="nav-view-btn text-xs font-mono text-cyan-400 hover:text-white flex items-center gap-1 transition-colors">
+                            <span>View Full Audit Log</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto rounded border border-white/10 font-mono text-xs">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-900/90 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
-                                    <th class="py-2.5 px-4">Plate</th>
-                                    <th class="py-2.5 px-4">Owner</th>
-                                    <th class="py-2.5 px-4">Model</th>
-                                    <th class="py-2.5 px-4">Fuel</th>
-                                    <th class="py-2.5 px-4">RTO City</th>
-                                    <th class="py-2.5 px-4">Source</th>
-                                    <th class="py-2.5 px-4">Status</th>
+                                <tr class="bg-black/90 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10">
+                                    <th class="py-2.5 px-3">Timestamp</th>
+                                    <th class="py-2.5 px-3">Event</th>
+                                    <th class="py-2.5 px-3">Plate Snapshot</th>
+                                    <th class="py-2.5 px-3">Registration</th>
+                                    <th class="py-2.5 px-3">Owner Profile</th>
+                                    <th class="py-2.5 px-3">Duration</th>
+                                    <th class="py-2.5 px-3">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="registry-table-body" class="divide-y divide-slate-800/50"></tbody>
+                            <tbody id="dashboard-recent-table-body" class="divide-y divide-white/5">
+                                <tr><td colspan="7" class="py-6 text-center text-slate-500">Connecting telemetry stream...</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </main>
+            <!-- ========================================================= -->
+            <!-- VIEW 2: CURRENTLY PARKED / INSIDE SESSIONS -->
+            <!-- ========================================================= -->
+            <div id="view-active-sessions" class="view-panel hidden space-y-4">
+                <div class="glass-panel reticle-box rounded-lg p-4 sm:p-5 border border-white/10 shadow-2xl space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded bg-cyan-950/50 border border-cyan-400/30 text-cyan-400 flex items-center justify-center">
+                                <i data-lucide="parking-circle" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-base font-bold text-white font-heading">Vehicles Currently Inside Premises</h3>
+                                <p class="text-xs text-slate-400 font-mono">Live stay timers & 5-minute exit eligibility rule tracker</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="active-sessions-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
+                    <div id="active-sessions-empty" class="py-12 text-center text-slate-500 text-sm hidden font-mono">
+                        <i data-lucide="check-circle" class="w-10 h-10 text-[#00ff88] mx-auto mb-2 opacity-60"></i>
+                        <p>No vehicles currently inside premises. All parking spots available.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================= -->
+            <!-- VIEW 3: ENTRY & EXIT AUDIT LOGS -->
+            <!-- ========================================================= -->
+            <div id="view-logs" class="view-panel hidden space-y-4">
+                <div class="glass-panel reticle-box rounded-lg p-4 sm:p-5 border border-white/10 shadow-2xl space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded bg-emerald-950/50 border border-[#00ff88]/30 text-[#00ff88] flex items-center justify-center">
+                                <i data-lucide="history" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-base font-bold text-white font-heading">Entry & Exit Telemetry History</h3>
+                                <p class="text-xs text-slate-400 font-mono">Detailed arrival, departure, and stay duration timestamps</p>
+                            </div>
+                        </div>
+
+                        <!-- Search & Filter Bar -->
+                        <div class="flex flex-wrap items-center gap-2 font-mono">
+                            <div class="relative">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input id="log-search-input" type="text" placeholder="Search plate, owner..." class="pl-8 pr-3 py-1.5 text-xs bg-black border border-white/15 rounded text-white placeholder-slate-500 focus:outline-none focus:border-[#00ff88] w-36 sm:w-48">
+                            </div>
+
+                            <select id="log-filter-status" class="py-1.5 px-2.5 text-xs bg-black border border-white/15 rounded text-white">
+                                <option value="ALL">All Events</option>
+                                <option value="ENTRY">Arrivals (Entry)</option>
+                                <option value="EXIT">Departures (Exit)</option>
+                                <option value="SECURITY_ALERT">Security Alerts</option>
+                            </select>
+
+                            <button id="btn-refresh-logs" title="Refresh" class="p-1.5 bg-slate-900 hover:bg-slate-800 rounded text-slate-300 border border-white/10">
+                                <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                            </button>
+
+                            <button id="btn-export-csv" class="btn-cyber-primary py-1 px-3 text-xs font-bold">
+                                <i data-lucide="download" class="w-3.5 h-3.5 mr-1"></i> Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Logs Table -->
+                    <div class="overflow-x-auto rounded border border-white/10 font-mono text-xs">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black/90 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10">
+                                    <th class="py-3 px-3 sm:px-4">Timestamp</th>
+                                    <th class="py-3 px-3 sm:px-4">Event</th>
+                                    <th class="py-3 px-3 sm:px-4">Plate Crop</th>
+                                    <th class="py-3 px-3 sm:px-4">Plate Number</th>
+                                    <th class="py-3 px-3 sm:px-4">Owner Profile</th>
+                                    <th class="py-3 px-3 sm:px-4">Stay Duration</th>
+                                    <th class="py-3 px-3 sm:px-4">Gate Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================= -->
+            <!-- VIEW 4: VAHAN & RTO REGISTRY DATABASE -->
+            <!-- ========================================================= -->
+            <div id="view-registry" class="view-panel hidden space-y-5">
+                
+                <!-- RapidAPI Status & Cache Summary Banner -->
+                <div class="glass-panel reticle-box rounded-lg p-4 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded bg-emerald-950/50 border border-[#00ff88]/30 flex items-center justify-center text-[#00ff88] shrink-0">
+                            <i data-lucide="database-zap" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h4 class="text-sm font-bold text-white font-heading">RapidAPI Indian RTO Gateway</h4>
+                                <div id="rto-status-pill" class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-900 text-slate-400 border border-white/10">
+                                    CHECKING...
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">First-time visitor vehicles are resolved live via RapidAPI and cached permanently in SQLite to eliminate API fees.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end font-mono">
+                        <div class="text-right">
+                            <div class="text-xs font-bold text-[#00ff88]"><span id="rto-cache-hits-text">0</span> Cache Hits (0 API Calls)</div>
+                            <div class="text-[11px] text-slate-400"><span id="rto-queries-text">0</span> External Queries</div>
+                        </div>
+                        <button onclick="showRTOModal()" class="btn-cyber-primary py-1.5 px-3 text-xs font-bold">
+                            Configure API
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <!-- Add Vehicle Form -->
+                    <div class="glass-panel reticle-box rounded-lg p-4 sm:p-5 border border-white/10 shadow-2xl space-y-4">
+                        <div class="flex items-center space-x-2 border-b border-white/10 pb-3">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-[#00ff88]"></i>
+                            <h3 class="text-sm font-bold text-white font-heading">Register New Vehicle</h3>
+                        </div>
+
+                        <form id="add-vehicle-form" class="space-y-3 text-xs font-mono">
+                            <div>
+                                <label class="block text-slate-400 mb-1">License Plate Number</label>
+                                <input name="plate_number" required placeholder="e.g. MH 12 AB 1234" class="w-full px-3 py-2 bg-black border border-white/15 rounded text-white uppercase focus:border-[#00ff88] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">Owner Full Name</label>
+                                <input name="owner_name" required placeholder="e.g. Dr. Rajesh Sharma" class="w-full px-3 py-2 bg-black border border-white/15 rounded text-white focus:border-[#00ff88] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">Vehicle Model & Make</label>
+                                <input name="vehicle_model" required placeholder="e.g. Tata Harrier XZA+" class="w-full px-3 py-2 bg-black border border-white/15 rounded text-white focus:border-[#00ff88] focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Fuel Type</label>
+                                    <select name="fuel_type" class="w-full px-2.5 py-2 bg-black border border-white/15 rounded text-white focus:border-[#00ff88] focus:outline-none">
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="EV">EV (Electric)</option>
+                                        <option value="CNG">CNG</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Access Level</label>
+                                    <select name="access_status" class="w-full px-2.5 py-2 bg-black border border-white/15 rounded text-white focus:border-[#00ff88] focus:outline-none">
+                                        <option value="AUTHORIZED">AUTHORIZED</option>
+                                        <option value="VIP">VIP</option>
+                                        <option value="GUEST">GUEST</option>
+                                        <option value="BLACKLISTED">BLACKLISTED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">Registration City & RTO</label>
+                                <input name="registration_city" required placeholder="e.g. Pune Central, Maharashtra" class="w-full px-3 py-2 bg-black border border-white/15 rounded text-white focus:border-[#00ff88] focus:outline-none">
+                            </div>
+
+                            <button type="submit" class="btn-cyber-primary w-full py-2.5 mt-2 text-xs font-bold justify-center">
+                                Save to Vahan Registry
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Directory Table -->
+                    <div class="lg:col-span-2 glass-panel reticle-box rounded-lg p-4 sm:p-5 border border-white/10 shadow-2xl space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="book-marked" class="w-4 h-4 text-cyan-400"></i>
+                                <h3 class="text-sm font-bold text-white font-heading">Cached Indian Vahan Registry</h3>
+                            </div>
+                            <div class="relative font-mono">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input id="registry-search-input" type="text" placeholder="Search registry..." class="pl-8 pr-3 py-1.5 text-xs bg-black border border-white/15 rounded text-white focus:outline-none focus:border-cyan-400 w-44">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded border border-white/10 font-mono text-xs">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-black/90 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10">
+                                        <th class="py-2.5 px-4">Plate</th>
+                                        <th class="py-2.5 px-4">Owner</th>
+                                        <th class="py-2.5 px-4">Model</th>
+                                        <th class="py-2.5 px-4">Fuel</th>
+                                        <th class="py-2.5 px-4">RTO City</th>
+                                        <th class="py-2.5 px-4">Source</th>
+                                        <th class="py-2.5 px-4">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="registry-table-body" class="divide-y divide-white/5"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
 
     <!-- Modal 1: High-Resolution Plate Snapshot Viewer -->
-    <div id="image-preview-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h4 id="modal-preview-title" class="text-sm font-bold text-slate-200">Plate Snapshot</h4>
-                <button id="modal-close-btn" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+    <div id="image-preview-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel reticle-box rounded-xl max-w-lg w-full p-5 shadow-2xl space-y-4 border border-white/15">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h4 id="modal-preview-title" class="text-sm font-bold text-white font-mono">Plate Snapshot</h4>
+                <button id="modal-close-btn" class="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center p-4">
+            <div class="bg-black rounded overflow-hidden border border-white/10 flex items-center justify-center p-4">
                 <img id="modal-preview-img" src="" alt="Snapshot" class="max-h-64 object-contain rounded">
             </div>
         </div>
     </div>
 
     <!-- Modal 2: Mobile Connect & QR Code -->
-    <div id="qr-connect-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="qr-connect-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel reticle-box rounded-xl max-w-md w-full p-6 shadow-2xl space-y-5 border border-cyan-500/30">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
                 <div class="flex items-center space-x-2">
-                    <i data-lucide="smartphone" class="w-5 h-5 text-indigo-400"></i>
-                    <h4 class="text-base font-bold text-slate-100">Connect Your Mobile Phone</h4>
+                    <i data-lucide="smartphone" class="w-5 h-5 text-cyan-400"></i>
+                    <h4 class="text-base font-bold text-white font-heading">Connect Your Mobile Phone</h4>
                 </div>
-                <button id="qr-modal-close-btn" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                <button id="qr-modal-close-btn" class="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="flex flex-col items-center justify-center space-y-3 bg-white p-4 rounded-xl shadow-inner mx-auto max-w-[220px]">
+            <div class="flex flex-col items-center justify-center space-y-3 bg-white p-4 rounded shadow-inner mx-auto max-w-[220px]">
                 <div id="qr-code-display"></div>
             </div>
 
-            <div class="text-center space-y-2 text-xs">
+            <div class="text-center space-y-2 text-xs font-mono">
                 <p class="text-slate-400">Scan this QR Code with your phone's camera on the same Wi-Fi network, or open:</p>
-                <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 font-mono font-bold text-cyan-400 select-all" id="mobile-url-display">
+                <div class="p-2.5 rounded bg-black border border-white/15 font-bold text-cyan-400 select-all" id="mobile-url-display">
                     http://{{ local_ip }}:{{ server_port }}
                 </div>
             </div>
 
-            <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 text-[11px] text-slate-400 space-y-1.5">
+            <div class="bg-black/60 p-3 rounded border border-white/10 text-[11px] font-mono text-slate-400 space-y-1.5">
                 <p class="font-bold text-slate-300">💡 Mobile Camera Testing:</p>
                 <p>1. Make sure your phone is connected to the same Wi-Fi network.</p>
                 <p>2. Tap the <strong>"Snap"</strong> button on mobile to snap photos of license plates directly with your camera!</p>
@@ -645,50 +959,50 @@
     </div>
 
     <!-- Modal 3: RapidAPI RTO Gateway Configuration & Sandbox Test -->
-    <div id="rto-config-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="rto-config-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel reticle-box rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-emerald-500/40">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
                 <div class="flex items-center space-x-2">
-                    <i data-lucide="globe" class="w-5 h-5 text-emerald-400"></i>
-                    <h4 class="text-base font-bold text-slate-100">RapidAPI Indian RTO Gateway</h4>
+                    <i data-lucide="globe" class="w-5 h-5 text-[#00ff88]"></i>
+                    <h4 class="text-base font-bold text-white font-heading">RapidAPI Indian RTO Gateway</h4>
                 </div>
-                <button id="rto-modal-close-btn" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                <button id="rto-modal-close-btn" class="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Credentials Form -->
-            <form id="rto-config-form" class="space-y-3.5 text-xs">
+            <form id="rto-config-form" class="space-y-3.5 text-xs font-mono">
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">RapidAPI Key (X-RapidAPI-Key)</label>
-                    <input id="rto-api-key-input" type="password" placeholder="Enter your RapidAPI Key (e.g. 9f8a...)" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-100 font-mono focus:border-indigo-500 focus:outline-none">
-                    <p class="text-[11px] text-slate-500 mt-1">Get your free tier key from <a href="https://rapidapi.com/" target="_blank" class="text-indigo-400 hover:underline">rapidapi.com</a> (search for <em>RTO Vehicle Information India</em>).</p>
+                    <label class="block text-slate-300 mb-1">RapidAPI Key (X-RapidAPI-Key)</label>
+                    <input id="rto-api-key-input" type="password" placeholder="Enter your RapidAPI Key (e.g. 9f8a...)" class="w-full px-3 py-2 bg-black border border-white/15 rounded text-white focus:border-[#00ff88] focus:outline-none">
+                    <p class="text-[11px] text-slate-500 mt-1">Get your key from <a href="https://rapidapi.com/" target="_blank" class="text-[#00ff88] hover:underline">rapidapi.com</a> (search for <em>RTO Vehicle Information India</em>).</p>
                 </div>
 
                 <div>
-                    <label class="block text-slate-300 font-semibold mb-1">RapidAPI Host</label>
-                    <input id="rto-api-host-input" type="text" value="rto-vehicle-information-india.p.rapidapi.com" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-300 font-mono focus:border-indigo-500 focus:outline-none">
+                    <label class="block text-slate-300 mb-1">RapidAPI Host</label>
+                    <input id="rto-api-host-input" type="text" value="rto-vehicle-information-india.p.rapidapi.com" class="w-full px-3 py-2 bg-black border border-white/15 rounded text-slate-300 focus:border-[#00ff88] focus:outline-none">
                 </div>
 
-                <button type="submit" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors">
+                <button type="submit" class="btn-cyber-primary w-full py-2.5 text-xs font-bold justify-center">
                     Save RapidAPI Credentials
                 </button>
             </form>
 
             <!-- Test Plate Lookup Sandbox -->
-            <div class="border-t border-slate-800 pt-4 space-y-2.5">
+            <div class="border-t border-white/10 pt-4 space-y-2.5 font-mono">
                 <h5 class="text-xs font-bold text-slate-200 uppercase tracking-wider">🔬 Test Plate Lookup Sandbox</h5>
                 <div class="flex space-x-2">
-                    <input id="rto-test-plate-input" placeholder="e.g. DL01CA5678" class="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs font-mono text-slate-100 uppercase focus:outline-none">
-                    <button id="btn-test-rto-lookup" type="button" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors">
+                    <input id="rto-test-plate-input" placeholder="e.g. DL01CA5678" class="flex-1 px-3 py-1.5 bg-black border border-white/15 rounded text-xs text-white uppercase focus:outline-none focus:border-[#00ff88]">
+                    <button id="btn-test-rto-lookup" type="button" class="btn-cyber-secondary py-1.5 px-3 text-xs font-bold">
                         Test Lookup
                     </button>
                 </div>
-                <div id="rto-test-result-box" class="p-3 bg-slate-950 rounded-xl border border-slate-800 hidden"></div>
+                <div id="rto-test-result-box" class="p-3 bg-black rounded border border-white/10 hidden text-xs"></div>
             </div>
 
             <!-- Notice -->
-            <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+            <div class="bg-black/60 p-3 rounded border border-white/10 text-[11px] font-mono text-slate-400 space-y-1">
                 <p class="font-semibold text-slate-300">🛡️ Quota Protection Guarantee:</p>
                 <p>Every license plate is queried at most <strong>once</strong>. All resolved vehicle models, owners, and RTO locations are cached permanently in your SQLite database.</p>
             </div>
@@ -714,5 +1028,7 @@
     <script>
         lucide.createIcons();
     </script>
+  <!-- Cinematic System Boot Script -->
+  <script src="/static/js/system-boot.js"></script>
 </body>
 </html>
