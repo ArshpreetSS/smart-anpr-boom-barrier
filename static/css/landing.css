@@ -1,0 +1,628 @@
+/* =====================================================================
+   GateKeeper AI — High-End Futuristic 3D Landing Page Styles
+   Palette: Cinematic Near-Black, Metallic Brushed Gunmetal,
+   Emerald Green Security, Electric Cyan / Azure, Warning Amber, Crimson
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+
+:root {
+  --bg-deep: #030508;
+  --bg-surface: #070a11;
+  --bg-elevated: #0c111c;
+  --bg-glass: rgba(10, 15, 26, 0.72);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(0, 255, 136, 0.4);
+  --border-cyan: rgba(0, 229, 255, 0.35);
+
+  --neon-emerald: #00ff88;
+  --neon-emerald-glow: rgba(0, 255, 136, 0.25);
+  --neon-cyan: #00e5ff;
+  --neon-cyan-glow: rgba(0, 229, 255, 0.25);
+  --neon-amber: #ffaa00;
+  --neon-red: #ff3344;
+  --neon-red-glow: rgba(255, 51, 68, 0.3);
+
+  --metal-highlight: rgba(255, 255, 255, 0.14);
+  --metal-shadow: rgba(0, 0, 0, 0.85);
+
+  --font-display: 'Syne', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Base resets & smooth scrolling handled by Lenis */
+html {
+  background-color: var(--bg-deep);
+  color: #f1f5f9;
+  font-family: var(--font-body);
+  scroll-behavior: auto !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: radial-gradient(circle at 50% 0%, #0d1527 0%, var(--bg-deep) 60%);
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-emerald);
+}
+
+/* Technical Grid Background Overlay */
+.technical-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.technical-grid-fine {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.radar-glow-radial {
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 255, 136, 0.08) 0%, transparent 70%);
+}
+
+.cyan-glow-radial {
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
+}
+
+/* Typography styles */
+.font-display {
+  font-family: var(--font-display);
+}
+.font-heading {
+  font-family: var(--font-heading);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Hero Title styling: extremely large, cinematic, tight letter spacing */
+.hero-headline {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.hero-gradient-text {
+  background: linear-gradient(135deg, #ffffff 30%, #94a3b8 80%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.emerald-gradient-text {
+  background: linear-gradient(135deg, #ffffff 20%, #00ff88 80%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cyan-gradient-text {
+  background: linear-gradient(135deg, #ffffff 20%, #00e5ff 80%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Precision Glass Panels */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.glass-panel-interactive {
+  background: rgba(12, 17, 28, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-interactive:hover {
+  border-color: rgba(0, 255, 136, 0.35);
+  box-shadow: 0 12px 36px -10px rgba(0, 255, 136, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+/* Corner Reticle Accents for Technical Look */
+.reticle-box {
+  position: relative;
+}
+.reticle-box::before,
+.reticle-box::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+}
+.reticle-box::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1.5px solid var(--neon-emerald);
+  border-left: 1.5px solid var(--neon-emerald);
+}
+.reticle-box::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1.5px solid var(--neon-emerald);
+  border-right: 1.5px solid var(--neon-emerald);
+}
+
+.reticle-box-cyan::before {
+  border-color: var(--neon-cyan);
+}
+.reticle-box-cyan::after {
+  border-color: var(--neon-cyan);
+}
+
+/* Glowing Pulsing Status Dots */
+.status-beacon-emerald {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-emerald);
+  box-shadow: 0 0 12px var(--neon-emerald);
+  position: relative;
+}
+.status-beacon-emerald::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  border: 1px solid var(--neon-emerald);
+  opacity: 0.7;
+  animation: beaconPulse 2.2s infinite ease-out;
+}
+
+@keyframes beaconPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.status-beacon-cyan {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 12px var(--neon-cyan);
+}
+
+.status-beacon-red {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-red);
+  box-shadow: 0 0 12px var(--neon-red);
+}
+
+/* Precision Buttons */
+.btn-cyber-primary {
+  position: relative;
+  background: #00ff88;
+  color: #030508;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.9rem 2rem;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -4px rgba(0, 255, 136, 0.4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-cyber-primary:hover {
+  background: #22ffa0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px -4px rgba(0, 255, 136, 0.65);
+}
+
+.btn-cyber-primary:active {
+  transform: translateY(0);
+}
+
+.btn-cyber-secondary {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8fafc;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.8rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-cyber-secondary:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Indian HSRP License Plate Replica */
+.hsrp-plate-mockup {
+  background: #ffffff;
+  color: #111827;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  border: 2px solid #000000;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.hsrp-plate-mockup .hsrp-ind-strip {
+  background: #0044ff;
+  color: #ffffff;
+  padding: 0.3rem 0.4rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  border-right: 1.5px solid #000000;
+  letter-spacing: 0.02em;
+}
+
+.hsrp-plate-mockup .hsrp-chakra {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+  position: relative;
+  margin-bottom: 2px;
+}
+
+/* Scanning Line Animation */
+@keyframes laserScan {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0.8;
+  }
+}
+
+.laser-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #00ff88 30%, #ffffff 50%, #00ff88 70%, transparent 100%);
+  box-shadow: 0 0 12px #00ff88, 0 0 24px #00ff88;
+  animation: laserScan 2s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+/* 3D Canvas Containers */
+#hero-canvas-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+#architecture-canvas-container,
+#security-canvas-container,
+#cta-canvas-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Floating Technical HUD Elements */
+.hud-telemetry-badge {
+  background: rgba(3, 7, 18, 0.8);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  backdrop-filter: blur(12px);
+  padding: 0.5rem 0.85rem;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #00ff88;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.hud-bracket {
+  position: relative;
+  padding: 0.75rem 1rem;
+}
+.hud-bracket::before {
+  content: '[';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00ff88;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+}
+.hud-bracket::after {
+  content: ']';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00ff88;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+}
+
+/* Card Tilt 3D Transform Utilities */
+.tilt-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.tilt-card-inner {
+  transform: translateZ(24px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .hero-headline {
+    font-size: 3.75rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-headline {
+    font-size: 2.75rem !important;
+    line-height: 0.96;
+  }
+  .btn-cyber-primary, .btn-cyber-secondary {
+    width: 100%;
+  }
+}
+
+/* =====================================================================
+   PINNED SCROLL-DRIVEN 3D STORYTELLING SYSTEM
+   ===================================================================== */
+#cinematic-scroll-container {
+  position: relative;
+  width: 100%;
+  min-height: 520vh; /* Scrubbed 3D storytelling timeline */
+}
+
+#pinned-viewport {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 20;
+}
+
+#cinematic-3d-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+/* Story Act Overlay Layers */
+.story-act {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 25;
+  padding: 1.5rem;
+  will-change: transform, opacity, filter;
+}
+
+.story-act-content {
+  pointer-events: auto;
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* Technical Vertical Scroll Progress Track */
+.scroll-tracker-hud {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.scroll-tracker-bar {
+  width: 2px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.scroll-tracker-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background: #00ff88;
+  box-shadow: 0 0 10px #00ff88;
+}
+
+/* Text Masking & Cinematic Blur */
+.cinematic-blur-text {
+  filter: blur(0px);
+  transition: filter 0.3s ease;
+}
+
+/* Ambient Vignette Gradients */
+.cinematic-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(3, 5, 8, 0.75) 100%);
+  pointer-events: none;
+  z-index: 15;
+}
+
+
+
+/* =========================================================================
+   CINEMATIC SYSTEM BOOT / INITIALIZATION EXPERIENCE
+   ========================================================================= */
+#system-boot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #020408;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter, clip-path;
+}
+
+#system-boot-overlay.boot-dismissing {
+  opacity: 0;
+  transform: scale(1.06);
+  filter: blur(14px);
+  clip-path: circle(0% at 50% 50%);
+  pointer-events: none;
+}
+
+.boot-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.boot-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.35) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.02),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.02)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+.boot-radial-glow {
+  background: radial-gradient(
+    circle at 50% 48%, 
+    rgba(0, 255, 136, 0.12) 0%, 
+    rgba(0, 229, 255, 0.05) 30%, 
+    transparent 65%
+  );
+}
+
+.boot-orbit-ring {
+  border: 1px dashed rgba(0, 229, 255, 0.25);
+  animation: bootOrbitSpin 14s linear infinite;
+}
+
+@keyframes bootOrbitSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.boot-orbit-pulse {
+  animation: bootOrbitPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes bootOrbitPulse {
+  0%, 100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.15); opacity: 0.5; }
+}
+
+.boot-ready-glow {
+  color: #00ff88 !important;
+  text-shadow: 0 0 16px #00ff88, 0 0 32px rgba(0, 255, 136, 0.6);
+}
