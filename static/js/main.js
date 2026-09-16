@@ -126,6 +126,18 @@ const elements = {
     ledRed: document.getElementById('led-red-light'),
     ledGreen: document.getElementById('led-green-light'),
     
+    // Sidebar & New Telemetry Elements
+    sidebarInsideCount: document.getElementById('sidebar-inside-count'),
+    cvHudHeader: document.getElementById('cv-hud-header'),
+    cvHudStatus: document.getElementById('cv-hud-status'),
+    cvHudPlate: document.getElementById('cv-hud-plate'),
+    cvHudConf: document.getElementById('cv-hud-conf'),
+    dashboardRecentTable: document.getElementById('dashboard-recent-table-body'),
+    stepIdle: document.getElementById('gate-step-idle'),
+    stepDetect: document.getElementById('gate-step-detect'),
+    stepVerify: document.getElementById('gate-step-verify'),
+    stepOpen: document.getElementById('gate-step-open'),
+
     // Telemetry Elements
     hsrpPlateContainer: document.getElementById('hsrp-plate-box'),
     hsrpPlateText: document.getElementById('hsrp-plate-text'),
@@ -273,6 +285,54 @@ function startFrameCaptureLoop() {
 // -------------------------------------------------------------
 // Server Response Handler (ANPR, Bounding Box & Gate Telemetry)
 // -------------------------------------------------------------
+
+// -------------------------------------------------------------
+// Vertical Status Progression (IDLE -> DETECT -> VERIFY -> OPEN)
+// -------------------------------------------------------------
+function updateProgressionSteps(step) {
+    const steps = ['idle', 'detect', 'verify', 'open'];
+    steps.forEach((s, idx) => {
+        const el = document.getElementById(`gate-step-${s}`);
+        if (!el) return;
+        if (idx <= step) {
+            el.className = 'p-1.5 rounded bg-emerald-950/60 text-[#00ff88] border border-[#00ff88]/40 font-bold transition-all';
+        } else {
+            el.className = 'p-1.5 rounded bg-black/40 text-slate-500 border border-white/5 transition-all';
+        }
+    });
+}
+
+function updateCVHUD(det, t) {
+    const hudHeader = document.getElementById('cv-hud-header');
+    const hudStatus = document.getElementById('cv-hud-status');
+    const hudPlate = document.getElementById('cv-hud-plate');
+    const hudConf = document.getElementById('cv-hud-conf');
+
+    if (det) {
+        const plate = det.plate_text || det.raw_text;
+        const conf = Math.round((det.confidence || 0) * 100);
+        if (hudPlate) hudPlate.innerText = plate;
+        if (hudConf) hudConf.innerText = `${conf}% (${det.engine || 'CNN'})`;
+        if (hudHeader) hudHeader.innerText = 'TARGET ACQUIRED';
+        if (hudStatus) {
+            hudStatus.innerText = det.is_valid ? 'LOCKED' : 'DETECTING';
+            hudStatus.className = det.is_valid
+                ? 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950 text-[#00ff88] border border-[#00ff88]/40'
+                : 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950 text-amber-400 border border-amber-500/40';
+        }
+    } else if (t && t.plate_number) {
+        if (hudPlate) hudPlate.innerText = t.plate_number;
+        if (hudHeader) hudHeader.innerText = 'VEHICLE VERIFIED';
+        if (hudStatus) {
+            const isBlacklisted = t.access_status === 'BLACKLISTED';
+            hudStatus.innerText = t.access_status || 'AUTHORIZED';
+            hudStatus.className = isBlacklisted
+                ? 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-950 text-rose-400 border border-rose-500/40 animate-pulse'
+                : 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-950 text-[#00ff88] border border-[#00ff88]/40';
+        }
+    }
+}
+
 function handleServerResponse(data) {
     isFrameInFlight = false;
     if (data.fps !== undefined) {
@@ -286,6 +346,10 @@ function handleServerResponse(data) {
 
     if (data.detections && data.detections.length > 0) {
         data.detections.forEach(det => drawBoundingBox(det));
+        updateCVHUD(data.detections[0], null);
+        if (!state.gateOpen) updateProgressionSteps(1);
+    } else if (!state.gateOpen) {
+        updateProgressionSteps(0);
     }
 
     if (data.consensus_count !== undefined) {
@@ -294,8 +358,9 @@ function handleServerResponse(data) {
         elements.consensusBar.style.width = `${pct}%`;
         elements.consensusText.innerText = `${count} / 2 Frames Consensus`;
         elements.consensusBar.className = count >= 2
-            ? 'h-full bg-emerald-500 rounded-full transition-all duration-300'
-            : 'h-full bg-indigo-500 rounded-full transition-all duration-300';
+            ? 'h-full bg-emerald-400 rounded-full transition-all duration-300'
+            : 'h-full bg-cyan-400 rounded-full transition-all duration-300';
+        if (count >= 1 && !state.gateOpen) updateProgressionSteps(2);
     }
 
     if (data.gate_state) {
@@ -392,11 +457,12 @@ function updateGateBarrierUI(isOpen, message) {
         elements.barrierArm.classList.add('open');
         elements.barrierArm.setAttribute('transform', 'rotate(-75, 65, 140)');
 
-        elements.ledGreen.className = 'w-4 h-4 rounded-full bg-emerald-400 led-green transition-all';
+        elements.ledGreen.className = 'w-4 h-4 rounded-full bg-[#00ff88] led-green transition-all';
         elements.ledRed.className = 'w-4 h-4 rounded-full bg-red-950 opacity-40 transition-all';
 
-        elements.gateStateBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all';
+        elements.gateStateBadge.className = 'px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-emerald-500/20 text-[#00ff88] border border-emerald-500/40 flex items-center gap-1.5 transition-all';
         elements.gateStateText.innerText = 'GATE OPEN (-75°)';
+        updateProgressionSteps(3);
     } else {
         elements.barrierArm.classList.remove('open');
         elements.barrierArm.setAttribute('transform', 'rotate(0, 65, 140)');
@@ -404,8 +470,9 @@ function updateGateBarrierUI(isOpen, message) {
         elements.ledRed.className = 'w-4 h-4 rounded-full bg-red-500 led-red transition-all';
         elements.ledGreen.className = 'w-4 h-4 rounded-full bg-emerald-950 opacity-40 transition-all';
 
-        elements.gateStateBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1.5 transition-all';
+        elements.gateStateBadge.className = 'px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center gap-1.5 transition-all';
         elements.gateStateText.innerText = 'GATE CLOSED (0°)';
+        updateProgressionSteps(0);
     }
 
     if (message) {
@@ -419,6 +486,7 @@ function updateGateBarrierUI(isOpen, message) {
 function updateTelemetryCard(t) {
     if (!t || !t.plate_number) return;
 
+    updateCVHUD(null, t);
     elements.hsrpPlateText.innerText = t.plate_number;
 
     const isEV = t.fuel_type && t.fuel_type.toUpperCase() === 'EV';
@@ -463,9 +531,9 @@ async function switchSource(source) {
 
     document.querySelectorAll('.source-tab-btn').forEach(btn => {
         if (btn.dataset.source === source) {
-            btn.className = 'source-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all';
+            btn.className = 'source-tab-btn px-3 py-1.5 rounded font-bold bg-[#00ff88] text-[#030508] shadow-sm flex items-center gap-1.5 transition-all';
         } else {
-            btn.className = 'source-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-all';
+            btn.className = 'source-tab-btn px-3 py-1.5 rounded font-medium text-slate-400 hover:text-white hover:bg-slate-900 flex items-center gap-1.5 transition-all';
         }
     });
 
@@ -648,6 +716,8 @@ async function refreshActiveSessions() {
         renderActiveSessions();
         elements.statInsideBadge.innerText = state.activeSessions.length;
         elements.statInside.innerText = state.activeSessions.length;
+        const sidebarCount = document.getElementById('sidebar-inside-count');
+        if (sidebarCount) sidebarCount.innerText = state.activeSessions.length;
     } catch (e) {
         console.error("Failed to load active sessions", e);
     }
@@ -900,6 +970,45 @@ function renderLogsTable() {
 
         tbody.appendChild(tr);
     });
+
+    // Also render the compact recent activity table on Dashboard
+    const recentBody = document.getElementById('dashboard-recent-table-body');
+    if (recentBody) {
+        recentBody.innerHTML = '';
+        const recentLogs = state.logs.slice(0, 4);
+        if (recentLogs.length === 0) {
+            recentBody.innerHTML = '<tr><td colspan="7" class="py-4 text-center text-slate-500">No recent gate activity.</td></tr>';
+        } else {
+            recentLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors text-xs font-mono';
+                let eventBadge = log.event_type === 'EXIT'
+                    ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">EXIT</span>'
+                    : log.event_type === 'SECURITY_ALERT'
+                    ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">ALERT</span>'
+                    : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-[#00ff88] border border-emerald-500/30">ENTRY</span>';
+                
+                const thumbUrl = log.plate_image_path || '/static/sample_plates/mh12ab1234_plate.jpg';
+                const stayStr = log.stay_duration || (log.event_type === 'ENTRY' ? 'Entering' : '—');
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-slate-400 whitespace-nowrap">${log.timestamp}</td>
+                    <td class="py-2.5 px-3">${eventBadge}</td>
+                    <td class="py-2.5 px-3">
+                        <img src="${thumbUrl}" alt="Crop" class="h-6 w-16 object-cover rounded border border-white/10 cursor-pointer" onclick="showImageModal('${thumbUrl}', '${log.plate_number}')">
+                    </td>
+                    <td class="py-2.5 px-3 font-bold text-white">${log.plate_number}</td>
+                    <td class="py-2.5 px-3 text-slate-300">${log.owner_name} <span class="text-slate-500 block text-[10px]">${log.vehicle_model}</span></td>
+                    <td class="py-2.5 px-3 text-slate-400">${stayStr}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="text-[10px] px-2 py-0.5 rounded font-bold ${log.gate_action === 'DENIED' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-[#00ff88]'}">${log.gate_action}</span>
+                    </td>
+                `;
+                recentBody.appendChild(tr);
+            });
+        }
+    }
+
 }
 
 async function refreshRegistry() {
@@ -946,6 +1055,45 @@ function renderRegistryTable() {
         `;
         tbody.appendChild(tr);
     });
+
+    // Also render the compact recent activity table on Dashboard
+    const recentBody = document.getElementById('dashboard-recent-table-body');
+    if (recentBody) {
+        recentBody.innerHTML = '';
+        const recentLogs = state.logs.slice(0, 4);
+        if (recentLogs.length === 0) {
+            recentBody.innerHTML = '<tr><td colspan="7" class="py-4 text-center text-slate-500">No recent gate activity.</td></tr>';
+        } else {
+            recentLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-white/5 hover:bg-white/5 transition-colors text-xs font-mono';
+                let eventBadge = log.event_type === 'EXIT'
+                    ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">EXIT</span>'
+                    : log.event_type === 'SECURITY_ALERT'
+                    ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">ALERT</span>'
+                    : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-[#00ff88] border border-emerald-500/30">ENTRY</span>';
+                
+                const thumbUrl = log.plate_image_path || '/static/sample_plates/mh12ab1234_plate.jpg';
+                const stayStr = log.stay_duration || (log.event_type === 'ENTRY' ? 'Entering' : '—');
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 text-slate-400 whitespace-nowrap">${log.timestamp}</td>
+                    <td class="py-2.5 px-3">${eventBadge}</td>
+                    <td class="py-2.5 px-3">
+                        <img src="${thumbUrl}" alt="Crop" class="h-6 w-16 object-cover rounded border border-white/10 cursor-pointer" onclick="showImageModal('${thumbUrl}', '${log.plate_number}')">
+                    </td>
+                    <td class="py-2.5 px-3 font-bold text-white">${log.plate_number}</td>
+                    <td class="py-2.5 px-3 text-slate-300">${log.owner_name} <span class="text-slate-500 block text-[10px]">${log.vehicle_model}</span></td>
+                    <td class="py-2.5 px-3 text-slate-400">${stayStr}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="text-[10px] px-2 py-0.5 rounded font-bold ${log.gate_action === 'DENIED' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-[#00ff88]'}">${log.gate_action}</span>
+                    </td>
+                `;
+                recentBody.appendChild(tr);
+            });
+        }
+    }
+
 }
 
 function showImageModal(imgUrl, title) {
@@ -990,22 +1138,45 @@ function exportLogsToCSV() {
 // UI Navigation Tabs & Event Listeners
 // -------------------------------------------------------------
 function setupEventListeners() {
-    document.querySelectorAll('.nav-view-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetView = btn.dataset.view;
-            
-            document.querySelectorAll('.nav-view-btn').forEach(b => {
-                b.className = b.dataset.view === targetView
-                    ? 'nav-view-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2'
-                    : 'nav-view-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2';
-            });
-
-            document.querySelectorAll('.view-panel').forEach(panel => {
-                if (panel.id === `view-${targetView}`) panel.classList.remove('hidden');
-                else panel.classList.add('hidden');
-            });
+    function switchView(targetView) {
+        document.querySelectorAll('.nav-view-btn').forEach(b => {
+            const isMatch = b.dataset.view === targetView;
+            if (b.classList.contains('sidebar-nav-btn')) {
+                b.className = isMatch
+                    ? 'sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 transition-all text-white bg-white/5 border-l-2 border-[#00ff88]'
+                    : 'sidebar-nav-btn nav-view-btn w-full text-left px-3 py-2.5 rounded flex items-center gap-2.5 text-slate-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all';
+            } else {
+                b.className = isMatch
+                    ? 'nav-view-btn px-4 py-2 rounded text-xs font-mono font-bold bg-[#00ff88] text-[#030508] shadow-[0_0_15px_rgba(0,255,136,0.25)] transition-all flex items-center gap-2 shrink-0'
+                    : 'nav-view-btn px-4 py-2 rounded text-xs font-mono font-semibold text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent transition-all flex items-center gap-2 shrink-0';
+            }
         });
+
+        document.querySelectorAll('.view-panel').forEach(panel => {
+            if (panel.id === `view-${targetView}`) panel.classList.remove('hidden');
+            else panel.classList.add('hidden');
+        });
+    }
+
+    document.querySelectorAll('.nav-view-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.view));
     });
+
+    const btnBlacklist = document.getElementById('sidebar-btn-blacklist');
+    if (btnBlacklist) {
+        btnBlacklist.addEventListener('click', () => {
+            switchView('registry');
+            if (elements.registrySearchInput) {
+                elements.registrySearchInput.value = 'BLACKLISTED';
+                refreshRegistry();
+            }
+        });
+    }
+
+    const btnExport = document.getElementById('sidebar-btn-export');
+    if (btnExport) {
+        btnExport.addEventListener('click', exportLogsToCSV);
+    }
 
     document.querySelectorAll('.source-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchSource(btn.dataset.source));
