@@ -354,10 +354,12 @@ function handleServerResponse(data) {
 
     if (data.consensus_count !== undefined) {
         const count = data.consensus_count;
-        const pct = Math.min(100, Math.round((count / 2) * 100));
+        const required = data.consensus_required || 3;
+        const stable = data.consensus_stable === true;
+        const pct = Math.min(100, Math.round((count / required) * 100));
         elements.consensusBar.style.width = `${pct}%`;
-        elements.consensusText.innerText = `${count} / 2 Frames Consensus`;
-        elements.consensusBar.className = count >= 2
+        elements.consensusText.innerText = `${count} / ${required} Matching Frames${stable ? ' • Confirmed' : ' • Verifying'}`;
+        elements.consensusBar.className = stable
             ? 'h-full bg-emerald-400 rounded-full transition-all duration-300'
             : 'h-full bg-cyan-400 rounded-full transition-all duration-300';
         if (count >= 1 && !state.gateOpen) updateProgressionSteps(2);
