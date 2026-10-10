@@ -84,6 +84,12 @@ Engineered specifically for Indian High-Security Registration Plates (HSRP) and 
 - Automatic first-time vehicle verification fetching **Owner Name (masked)**, **Vehicle Model**, **Fuel Type (Petrol, Diesel, EV, CNG)**, and **Registration District**.
 - **Permanent SQLite Registry Cache**: Only calls external API on first encounter per plate, reducing API quota usage to 0 for subsequent visits.
 
+### 🎯 8. Time-Bounded Multi-Frame Consensus & Vision Fallback
+- **Flicker-Free Anti-Hallucination**: Eliminates single-frame OCR misreads caused by motion blur, headlight glare, or vehicle motion.
+- **Temporal Consensus Window**: Requires $N$ identical, highly confident plate detections (default: 2 frames) within a sliding time window (1.8s) before triggering gate lift or stay logging.
+- **Candidate Box Prioritization**: Employs geometric aspect ratio filters (clamped to realistic Indian HSRP plate geometry: ~2.5 to 5.5) and contour area ranking to prioritize license plates over radiator grills and badges.
+- **Full-Frame EasyOCR Fallback**: Automatically falls back to full-frame scanning if morphological bounding box localization misses under extreme angles or low light.
+
 ---
 
 ## ⚡ Performance Benchmarks
@@ -105,6 +111,7 @@ Inference times measured on standard CPU:
 GateKeeper-AI/
 │
 ├── app.py                            # FastAPI asynchronous application core
+├── plate_consensus.py                # Time-bounded multi-frame plate consensus engine
 ├── requirements.txt                  # Python dependencies
 ├── README.md                         # Project documentation
 ├── .gitignore
@@ -112,6 +119,9 @@ GateKeeper-AI/
 │
 ├── database/
 │   └── gate_records.db               # SQLite database (sessions, logs, vehicle registry)
+│
+├── tests/
+│   └── test_plate_consensus.py       # Unit test suite for consensus stabilization
 │
 ├── static/
 │   ├── css/
@@ -174,6 +184,12 @@ pip install -r requirements.txt
 Copy `.env.example` to `.env` and fill in your RapidAPI key if you want live Indian RTO data:
 ```bash
 cp .env.example .env
+```
+
+### 5. Run Test Suite
+Verify that all algorithms and consensus engines are passing:
+```bash
+python -m unittest discover -s tests
 ```
 
 ---
