@@ -1421,25 +1421,37 @@ templates = Jinja2Templates(directory="templates")
 # =====================================================================
 @app.get("/", response_class=HTMLResponse)
 async def serve_index(request: Request):
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "local_ip": get_local_ip(),
-        "server_port": request.url.port or 8000
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "request": request,
+            "local_ip": get_local_ip(),
+            "server_port": request.url.port or 8000
+        }
+    )
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def serve_dashboard(request: Request):
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "local_ip": get_local_ip(),
-        "server_port": request.url.port or 8000
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html",
+        context={
+            "request": request,
+            "local_ip": get_local_ip(),
+            "server_port": request.url.port or 8000
+        }
+    )
 
 @app.get("/login", response_class=HTMLResponse)
 async def serve_login(request: Request):
-    return templates.TemplateResponse("login.html", {
-        "request": request
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html",
+        context={
+            "request": request
+        }
+    )
 
 @app.get("/api/rto/config")
 def get_rto_config(db: Session = Depends(get_db)):
