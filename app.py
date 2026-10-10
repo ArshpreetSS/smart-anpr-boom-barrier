@@ -7,7 +7,7 @@ import socket
 import random
 import datetime
 from typing import List, Dict, Optional, Tuple
-from collections import deque, Counter
+from plate_consensus import PlateConsensus
 
 import cv2
 import numpy as np
@@ -1117,23 +1117,6 @@ class GateManager:
         self.last_telemetry: Dict = {}
         self.status_message: str = "System Ready • Gate Closed"
         self.cooldowns: Dict[str, float] = {}
-        self.voting_buffer: deque = deque(maxlen=15)
-
-    def add_observation(self, plate_str: str, is_valid: bool):
-        if is_valid and plate_str:
-            self.voting_buffer.append(plate_str)
-        else:
-            self.voting_buffer.append("")
-
-    def get_consensus(self, min_count: int = 2) -> Optional[Tuple[str, int]]:
-        valid_items = [p for p in self.voting_buffer if p]
-        if not valid_items:
-            return None
-        counts = Counter(valid_items)
-        most_common_plate, freq = counts.most_common(1)[0]
-        if freq >= min_count:
-            return most_common_plate, freq
-        return None
 
     def trigger_gate_event(self, plate_number: str, confidence: float, plate_crop: Optional[np.ndarray], db: Session) -> Dict:
         now_dt = datetime.datetime.utcnow()
