@@ -920,10 +920,12 @@ def correct_and_validate_plate(raw_chars: str) -> Tuple[bool, str, str]:
 
 def perform_anpr(image_bgr: np.ndarray) -> List[Dict]:
     h, w = image_bgr.shape[:2]
-    plate_boxes = locate_plates(image_bgr)
+    candidate_boxes = locate_plates(image_bgr)
     
+    # Put candidate plate boxes first, and add full-frame at the end as fallback
+    plate_boxes = list(candidate_boxes)
     if (0, 0, w, h) not in plate_boxes:
-        plate_boxes.insert(0, (0, 0, w, h))
+        plate_boxes.append((0, 0, w, h))
         
     results = []
     seen_plates = set()
