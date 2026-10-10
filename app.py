@@ -498,14 +498,22 @@ class HybridOCREngine:
 
     def read_plate_easyocr(self, plate_img_bgr: np.ndarray) -> Tuple[str, float]:
         h, w = plate_img_bgr.shape[:2]
-        if h < 18 or w < 35:
+        if h < 15 or w < 30:
             return "", 0.0
             
-        target_h = 70
-        scale = min(target_h / float(h), 320.0 / float(w))
-        new_w = max(40, int(w * scale))
-        new_h = max(20, int(h * scale))
-        resized = cv2.resize(plate_img_bgr, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        if h < 55:
+            scale = 75.0 / float(h)
+            new_w = max(40, int(w * scale))
+            new_h = max(20, int(h * scale))
+            resized = cv2.resize(plate_img_bgr, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
+        elif w > 640:
+            scale = 640.0 / float(w)
+            new_w = int(w * scale)
+            new_h = int(h * scale)
+            resized = cv2.resize(plate_img_bgr, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        else:
+            resized = plate_img_bgr
+
         padded = cv2.copyMakeBorder(resized, 8, 8, 12, 12, cv2.BORDER_CONSTANT, value=[255, 255, 255])
         
         try:
