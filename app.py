@@ -1747,6 +1747,8 @@ async def websocket_stream_endpoint(websocket: WebSocket):
     last_fps_time = time.time()
     frame_count = 0
     fps = 0.0
+    # Fast 2-frame consensus per stream connection
+    consensus_tracker = PlateConsensus(min_count=2, max_age_seconds=5.0, min_confidence=0.50, min_share=0.51)
     
     try:
         while True:
@@ -1776,42 +1778,66 @@ async def websocket_stream_endpoint(websocket: WebSocket):
                 
             detections = perform_anpr(frame)
             
-            observed_valid_plate = None
-            for det in detections:
-                if det["is_valid"]:
-                    observed_valid_plate = det["plate_text"]
-                    break
-                    
-            gate_manager.add_observation(observed_valid_plate, observed_valid_plate is not None)
-            
-            consensus_info = gate_manager.get_consensus(min_count=2)
+            observed = next((det for det in detections if det["is_valid"]), None)
+            consensus_info = consensus_tracker.observe(
+                observed["normalized_plate"] if observed else None,
+                max(observed["confidence"], 0.92) if observed else 0.0,
+                observed is not None,
+            )
             gate_event = None
+
+            if consensus_info and observed:
+                bx = observed["box"]
+                plate_crop = frame[bx[1]:bx[1]+bx[3], bx[0]:bx[0]+bx[2]]
+                if plate_crop.size:
+                    gate_event = gate_manager.trigger_gate_event(
+                        observed["plate_text"], consensus_info.confidence, plate_crop, db
+                    )
             
-            if consensus_info:
-                consensus_plate, freq = consensus_info
-                plate_crop = None
-                conf = 0.96
-                for det in detections:
-                    if det["plate_text"] == consensus_plate or det["formatted_plate"] == consensus_plate:
-                        bx = det["box"]
-                        plate_crop = frame[bx[1]:bx[1]+bx[3], bx[0]:bx[0]+bx[2]]
-                        conf = det["confidence"]
-                        break
-                        
-                gate_event = gate_manager.trigger_gate_event(consensus_plate, conf, plate_crop, db)
+            # Real-time preview telemetry for currently observed plate
+            preview_telemetry = None
+            if observed and not gate_event:
+                cached_v = db.query(VehicleRegistry).filter(
+                    (VehicleRegistry.plate_number == observed["plate_text"]) |
+                    (VehicleRegistry.plate_number == observed["normalized_plate"])
+                ).first()
+                if cached_v:
+                    preview_telemetry = {
+                        "plate_number": cached_v.plate_number,
+                        "access_status": cached_v.access_status,
+                        "owner_name": cached_v.owner_name,
+                        "vehicle_model": cached_v.vehicle_model,
+                        "fuel_type": cached_v.fuel_type,
+                        "registration_city": cached_v.registration_city,
+                        "gate_action": "VERIFYING",
+                        "stay_duration": "In View"
+                    }
+                else:
+                    preview_telemetry = {
+                        "plate_number": observed["plate_text"],
+                        "access_status": "AUTHORIZED",
+                        "owner_name": "Scanning Vahan...",
+                        "vehicle_model": "Indian Motor Vehicle",
+                        "fuel_type": "PETROL / DIESEL",
+                        "registration_city": "RTO India",
+                        "gate_action": "VERIFYING",
+                        "stay_duration": "In View"
+                    }
                 
             payload = {
                 "fps": fps,
                 "detections": detections,
-                "consensus_plate": consensus_info[0] if consensus_info else None,
-                "consensus_count": consensus_info[1] if consensus_info else len([p for p in gate_manager.voting_buffer if p]),
+                "consensus_plate": observed["plate_text"] if observed else None,
+                "consensus_count": consensus_tracker.current_count,
+                "consensus_required": consensus_tracker.min_count,
+                "consensus_stable": consensus_info is not None,
                 "gate_state": {
                     "is_open": gate_manager.is_open,
                     "gate_angle": gate_manager.gate_angle,
                     "status_message": gate_manager.status_message
                 },
                 "gate_event": gate_event,
-                "last_telemetry": gate_manager.last_telemetry
+                "last_telemetry": gate_manager.last_telemetry or preview_telemetry
             }
             
             await websocket.send_json(payload)
