@@ -753,6 +753,13 @@ def _format_std_match(m: re.Match) -> str:
         return f"{state} {rto} {series} {num}"
     return f"{state} {rto} {num}"
 
+STATE_PREFIX_CORRECTIONS = {
+    "JP": "UP", "DP": "UP", "VP": "UP",
+    "OL": "DL", "QL": "DL", "0L": "DL",
+    "FB": "PB", "PJ": "RJ", "CJ": "GJ",
+    "MI": "MH"
+}
+
 def correct_and_validate_plate(raw_chars: str) -> Tuple[bool, str, str]:
     clean_raw = re.sub(r"[^A-Za-z0-9]", "", raw_chars).upper()
     if len(clean_raw) < 7 or len(clean_raw) > 14:
@@ -767,6 +774,10 @@ def correct_and_validate_plate(raw_chars: str) -> Tuple[bool, str, str]:
         clean_raw = clean_raw[3:]
     elif len(clean_raw) >= 9 and clean_raw[:2] not in INDIAN_STATE_CODES and clean_raw[1:3] in INDIAN_STATE_CODES:
         clean_raw = clean_raw[1:]
+
+    # Fix common state code OCR confusions if initial 2 letters are not a valid state
+    if len(clean_raw) >= 8 and clean_raw[:2] not in INDIAN_STATE_CODES and clean_raw[:2] in STATE_PREFIX_CORRECTIONS:
+        clean_raw = STATE_PREFIX_CORRECTIONS[clean_raw[:2]] + clean_raw[2:]
 
     # Direct match on clean_raw first
     m_raw = INDIAN_PLATE_STD_REGEX.match(clean_raw)
