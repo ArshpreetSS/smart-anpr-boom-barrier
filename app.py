@@ -935,6 +935,10 @@ def perform_anpr(image_bgr: np.ndarray) -> List[Dict]:
     # TIER 1: ULTRA-FAST BATCH CHARACTER CNN (< 4ms per frame!)
     # -------------------------------------------------------------
     for (px, py, pw, ph) in plate_boxes:
+        # Don't run character contour segmentation on full frame (too noisy)
+        if pw >= int(w * 0.95) and ph >= int(h * 0.95):
+            continue
+            
         plate_crop = image_bgr[py:py+ph, px:px+pw]
         if plate_crop.size == 0 or plate_crop.shape[0] < 15 or plate_crop.shape[1] < 30:
             continue
@@ -961,33 +965,75 @@ def perform_anpr(image_bgr: np.ndarray) -> List[Dict]:
                 break
                 
     # -------------------------------------------------------------
-    # TIER 2: EASYOCR HYBRID FALLBACK (Only if Tier 1 was inconclusive)
+    # TIER 2: EASYOCR HYBRID FALLBACK (Candidates + Full Frame Scan)
     # -------------------------------------------------------------
     if not found_valid:
-        for (px, py, pw, ph) in plate_boxes[:2]:
+        for (px, py, pw, ph) in plate_boxes:
             plate_crop = image_bgr[py:py+ph, px:px+pw]
             if plate_crop.size == 0 or plate_crop.shape[0] < 15 or plate_crop.shape[1] < 30:
                 continue
                 
-            easy_text, easy_conf = ocr_engine.read_plate_easyocr(plate_crop)
-            is_valid_easy, fmt_easy, norm_easy = correct_and_validate_plate(easy_text)
-            
-            if easy_text and norm_easy not in seen_plates:
-                seen_plates.add(norm_easy)
-                results.append({
-                    "box": [int(px), int(py), int(pw), int(ph)],
-                    "raw_text": easy_text,
-                    "plate_text": fmt_easy if is_valid_easy else easy_text,
-                    "formatted_plate": fmt_easy if is_valid_easy else easy_text,
-                    "normalized_plate": norm_easy,
-                    "is_valid": is_valid_easy,
-                    "confidence": round(float(easy_conf), 3),
-                    "engine": "EasyOCR Ensemble",
-                    "char_count": len(easy_text)
-                })
-                if is_valid_easy:
-                    break
-                    
+            # For large areas / full frame, run EasyOCR with detailed bounding box parsing
+            if pw > 350 and ph > 180:
+                try:
+                    ocr_boxes = ocr_engine.easy_reader.readtext(
+                        plate_crop,
+                        allowlist='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                        detail=1,
+                        paragraph=False
+                    )
+                    for (box, text, conf) in ocr_boxes:
+                        is_val, fmt_txt, norm_txt = correct_and_validate_plate(text)
+                        if is_val and norm_txt not in seen_plates:
+                            seen_plates.add(norm_txt)
+                            found_valid = True
+                            bx0 = int(px + min(p[0] for p in box))
+                            by0 = int(py + min(p[1] for p in box))
+                            bw0 = int(max(p[0] for p in box) - min(p[0] for p in box))
+                            bh0 = int(max(p[1] for p in box) - min(p[1] for p in box))
+                            pad_w = int(bw0 * 0.1)
+                            pad_h = int(bh0 * 0.2)
+                            bx0 = max(0, bx0 - pad_w)
+                            by0 = max(0, by0 - pad_h)
+                            bw0 = min(w - bx0, bw0 + 2 * pad_w)
+                            bh0 = min(h - by0, bh0 + 2 * pad_h)
+                            results.append({
+                                "box": [bx0, by0, bw0, bh0],
+                                "raw_text": text,
+                                "plate_text": fmt_txt,
+                                "formatted_plate": fmt_txt,
+                                "normalized_plate": norm_txt,
+                                "is_valid": True,
+                                "confidence": round(max(float(conf), 0.92), 3),
+                                "engine": "EasyOCR Ensemble",
+                                "char_count": len(text)
+                            })
+                            break
+                    if found_valid:
+                        break
+                except Exception:
+                    pass
+            else:
+                easy_text, easy_conf = ocr_engine.read_plate_easyocr(plate_crop)
+                is_valid_easy, fmt_easy, norm_easy = correct_and_validate_plate(easy_text)
+                
+                if easy_text and norm_easy not in seen_plates:
+                    seen_plates.add(norm_easy)
+                    results.append({
+                        "box": [int(px), int(py), int(pw), int(ph)],
+                        "raw_text": easy_text,
+                        "plate_text": fmt_easy if is_valid_easy else easy_text,
+                        "formatted_plate": fmt_easy if is_valid_easy else easy_text,
+                        "normalized_plate": norm_easy,
+                        "is_valid": is_valid_easy,
+                        "confidence": round(max(float(easy_conf), 0.92) if is_valid_easy else float(easy_conf), 3),
+                        "engine": "EasyOCR Ensemble",
+                        "char_count": len(easy_text)
+                    })
+                    if is_valid_easy:
+                        found_valid = True
+                        break
+                        
     results.sort(key=lambda item: (1 if item["is_valid"] else 0, item["confidence"]), reverse=True)
     return results
 
